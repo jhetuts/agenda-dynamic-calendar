@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="agenda-ui"></div>
+    <style>
+      html {
+        font-family: Montserrat;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        list-style: none;
+      }
+
+      .agenda-wrapper {
+        display: flex;
+        width: 100%;
+        margin: auto;
+        flex-direction: column;
+      }
+
+      .agenda-head {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border-top-right-radius: 8px;
+        border-top-left-radius: 8px;
+        overflow: hidden;
+        align-items: center;
+      }
+      @media screen and (max-width: 767px) {
+        .agenda-head {
+          flex-direction: column;
+        }
+      }
+      .agenda-days {
+        display: flex;
+        flex-direction: row;
+      }
+      @media screen and (max-width: 767px) {
+        .agenda-days {
+          width: 100%;
+          text-align: center;
+          font-size: 14px;
+        }
+      }
+      .agenda-days li {
+        padding: 10px;
+        background: #e8e8e8;
+        color: #2a2a2a;
+        cursor: pointer;
+      }
+      .agenda-days li.active {
+        border-top: solid 2px #42d886;
+        background: #f5f5f5;
+      }
+      .agenda-timezone {
+        font-weight: 700;
+        padding: 10px;
+        font-size: 14px;
+      }
+      @media screen and (max-width: 767px) {
+        .agenda-timezone {
+          text-align: center;
+          padding: 10px 0;
+          font-size: 12px;
+          background: #f5f5f5;
+          width: 100%;
+        }
+      }
+      .agenda-body,
+      .col-1,
+      .col-2 {
+        display: flex;
+        background: #f5f5f5;
+      }
+
+      .agenda-body .col-1 {
+        display: flex;
+        flex-direction: column;
+        width: 175px;
+      }
+
+      @media screen and (max-width: 767px) {
+        .agenda-body .col-1 {
+          width: 120px;
+        }
+      }
+      .agenda-body .col-1 div {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 12px;
+        flex-direction: column;
+        padding: 10px;
+        text-align: center;
+      }
+      .agenda-body .col-1 .desc {
+        font-size: 10px;
+      }
+      .agenda-body .col-1 .space {
+        height: 60px;
+      }
+      .agenda-body .col-2 {
+        position: relative;
+        width: calc(100% - 175px);
+        overflow-x: auto;
+        display: flex;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      @media screen and (max-width: 767px) {
+        .agenda-body .col-2 {
+          width: calc(100% - 120px);
+        }
+      }
+      .agenda-body .col-2::-webkit-scrollbar {
+        display: none;
+      }
+      .col-2 .marker {
+        position: absolute;
+        height: 100%;
+        bottom: 0;
+        display: flex;
+        width: 60px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        text-align: center;
+        z-index: 1;
+      }
+      .col-2 .marker i {
+        font-style: normal;
+        font-size: 12px;
+        background: #f02849;
+        color: #fff;
+        line-height: 1;
+      }
+      .col-2 .marker i:first-child {
+        width: 100%;
+        padding: 3px;
+        border-radius: 3px;
+      }
+      .col-2 .marker i.line {
+        width: 0.67px;
+        height: calc(100% - 18px);
+      }
+      .col-2 .mid-col-1 {
+        position: relative;
+      }
+      .col-2 .mid-col-2 {
+        display: flex;
+        padding: 20px;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      .col-2 .mid-col-2 img {
+        width: 40px;
+      }
+      .col-2 .mid-col-2 p {
+        font-size: 14px;
+        white-space: nowrap;
+      }
+      .hour-denomination,
+      .calendar-blocks {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+      }
+      .calendar-breakouts {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .hour-denomination .time,
+      .calendar-blocks .block,
+      .parent-breakouts .block {
+        display: flex;
+        width: 60px;
+        height: 60px;
+        font-size: 12px;
+        align-items: center;
+        justify-content: center;
+      }
+      .calendar-blocks .block,
+      .calendar-breakouts .block {
+        position: relative;
+        border-bottom: 2px solid #eaeaea;
+        background: #fff;
+      }
+      .calendar-blocks .agenda,
+      .parent-breakouts .breakout {
+        display: flex;
+        position: absolute;
+        margin: auto;
+        height: calc(60px - 12px);
+        top: 0;
+        bottom: 0;
+        border-radius: 4px;
+        padding: 5px;
+        align-items: center;
+        text-decoration: none;
+      }
+      .calendar-blocks .agenda p,
+      .parent-breakouts .breakout p {
+        font-size: 10px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .calendar-blocks .agenda p span,
+      .parent-breakouts .breakout p span {
+        display: block;
+      }
+      .agenda .images,
+      .breakout .images {
+        display: flex;
+        height: 100%;
+      }
+      .agenda .images img,
+      .breakout .images img {
+        display: block;
+        height: 100%;
+        margin-right: 4px;
+        box-sizing: border-box;
+      }
+      .calendar-blocks .block:before,
+      .calendar-breakouts .block:before {
+        content: "";
+        width: 2px;
+        height: 100%;
+        background: #eaeaea;
+      }
+      .calendar-breakouts .parent-breakouts {
+        display: flex;
+        position: relative;
+        flex-direction: row;
+        width: 100%;
+      }
+    </style>
+    <div class="agenda-wrapper">
+      <div class="agenda-head">
+        <ul class="agenda-days"></ul>
+        <div class="agenda-timezone"></div>
+      </div>
+      <div class="agenda-body">
+        <div class="col-1">
+          <div class="space"></div>
+          <div class="agenda-calendar-label"></div>
+          <div class="agenda-breakout-label"></div>
+        </div>
+        <div class="col-2">
+          <div class="mid-col-1">
+            <span class="marker"><i>Now</i><i class="line"></i></span>
+            <div class="agenda-hours">
+              <div class="hour-denomination"></div>
+            </div>
+            <div class="agenda-calendar">
+              <div class="calendar-blocks"></div>
+            </div>
+            <div class="agenda-breakout">
+              <div class="calendar-breakouts"></div>
+            </div>
+          </div>
+          <div class="mid-col-2">
+            <img
+              src="https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/2fee5016220f40ac89d4c3c6c4f524c2.png"
+              alt="See you"
+            />
+            <p class="end-note">Thank you! See You Next Time!</p>
+            <p class="end-note">[Translation Missing]</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      "use strict";
+
+      (function () {
+        var agendaTarget = document.querySelector(".agenda-ui");
+        var theAgendaUI = document.querySelector(".agenda-wrapper");
+        theAgendaUI.style.display = "none";
+        var checkAgendaTarget = setInterval(function () {
+          if (agendaTarget) {
+            // Drag and Scroll
+            var dragScroll = function dragScroll() {
+              var container = document.querySelector(".col-2");
+              var isDown = !1;
+              var startX = 0;
+              var scrollLeft = 0;
+
+              var mouseDownHandler = function mouseDownHandler(a) {
+                (isDown = !0),
+                  (container.style.cursor = "grabbing"),
+                  (startX = a.pageX - container.offsetLeft),
+                  (scrollLeft = container.scrollLeft),
+                  container.addEventListener("mouseup", mouseUpHandler),
+                  container.addEventListener("mouseleave", mouseUpHandler),
+                  container.addEventListener("mousemove", mouseMoveHandler);
+              };
+
+              var mouseUpHandler = function mouseUpHandler(a) {
+                (container.style.cursor = "grab"), (isDown = !1);
+              };
+
+              var mouseMoveHandler = function mouseMoveHandler(a) {
+                a.preventDefault();
+
+                if (isDown) {
+                  var i = 2 * (a.pageX - container.offsetLeft - startX);
+                  container.scrollLeft = scrollLeft - i;
+                }
+              };
+
+              container.addEventListener("mousedown", mouseDownHandler);
+            }; // Utilities
+
+            var isDateEqual = function isDateEqual(data) {
+              var y = calculateBetweenLocalAndDefaultTz(
+                data.defaultCity,
+                data.defaultTimezoneOffset
+              );
+              var today = new Date(y);
+              var dd = String(today.getDate()).padStart(2, "0");
+              var mm = String(today.getMonth() + 1).padStart(2, "0");
+              var yyyy = today.getFullYear();
+              var currentDay = new Date(mm + "/" + dd + "/" + yyyy);
+              var testDate = new Date(data.date);
+
+              if (testDate.getTime() === currentDay.getTime()) {
+                console.log("is Equal");
+                checkRangeInSession(data);
+              }
+
+              return testDate.getTime() === currentDay.getTime();
+            };
+
+            var checkRangeInSession = function checkRangeInSession(data) {
+              var dt = calculateBetweenLocalAndDefaultTz(
+                data.defaultCity,
+                data.defaultTimezoneOffset
+              );
+              var startTime = data.from;
+              var endTime = data.to;
+              var s = startTime.split(":");
+              var dt1 = new Date(
+                dt.getFullYear(),
+                dt.getMonth(),
+                dt.getDate(),
+                parseInt(s[0]),
+                parseInt(s[1]),
+                parseInt(s[2])
+              );
+              var e = endTime.split(":");
+              var dt2 = new Date(
+                dt.getFullYear(),
+                dt.getMonth(),
+                dt.getDate(),
+                parseInt(e[0]),
+                parseInt(e[1]),
+                parseInt(e[2])
+              );
+
+              if (dt >= dt1 && dt <= dt2) {
+                marker.style.display = "flex";
+                var from = new Date(data.date + " " + data.from);
+                var to = new Date(dt);
+                var secondsDiff = checkSecondsDiff(from, to);
+                var markerPos = (secondsDiff / 60 / 5) * 60;
+                marker.style.left = markerPos + "px";
+                startCheckingTime(data);
+              }
+            };
+
+            var calculateBetweenLocalAndDefaultTz = function calculateBetweenLocalAndDefaultTz(
+              city,
+              offset
+            ) {
+              var d = new Date();
+              var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+              var nd = new Date(utc + 3600000 * offset);
+              return nd;
+            };
+
+            var checkActive = function checkActive(tabs) {
+              var withActive = false;
+              tabs.forEach(function (tab) {
+                if (tab.classList.contains("active")) {
+                  withActive = true;
+                }
+              });
+              return withActive;
+            };
+
+            var checkSecondsDiff = function checkSecondsDiff(a, b) {
+              if (a.getTime() < b.getTime()) {
+                var diff = (a.getTime() - b.getTime()) / 1000;
+                diff /= 60 * 60;
+                return Math.abs(diff * 60 * 60);
+              }
+            }; // Filling contents
+
+            var checkTabActive = function checkTabActive() {
+              var tabs = document.querySelectorAll(".tab");
+              tabs.forEach(function (tab) {
+                if (tab.classList.contains("active")) {
+                  fillTimeTable(eventData[tab.dataset.id]);
+                  fillLabels(eventData[tab.dataset.id]);
+                  fillCalendarBlocks(eventData[tab.dataset.id]);
+                  fillBreakOutBlocks(eventData[tab.dataset.id]);
+                }
+              });
+            };
+
+            var fillTimeTable = function fillTimeTable(data) {
+              var hourDenomination = document.querySelector(
+                ".hour-denomination"
+              );
+              hourDenomination.innerHTML = "";
+              var from = new Date(data.date + " " + data.from);
+              var to = new Date(data.date + " " + data.to);
+              var secondsDiff = checkSecondsDiff(from, to); // base
+
+              var counter = 0;
+              var base = parseInt(data.from);
+
+              for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
+                if (counter > 55) {
+                  base++;
+                  counter = 0;
+                }
+
+                var timeMarks = document.createElement("div");
+                timeMarks.classList.add("time");
+                timeMarks.innerHTML = base + ":" + ("0" + counter).slice(-2);
+                hourDenomination.appendChild(timeMarks);
+                counter += 5;
+              }
+            };
+
+            var fillCalendarBlocks = function fillCalendarBlocks(data) {
+              var calendarBlocks = document.querySelector(".calendar-blocks");
+              calendarBlocks.innerHTML = "";
+              var from = new Date(data.date + " " + data.from);
+              var to = new Date(data.date + " " + data.to);
+              var secondsDiff = checkSecondsDiff(from, to); // seconds (width of the container)
+
+              var counter = 0;
+              var base = parseInt(data.from);
+
+              for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
+                if (counter > 55) {
+                  base++;
+                  counter = 0;
+                }
+
+                var block = document.createElement("div");
+                block.classList.add("block");
+                calendarBlocks.appendChild(block);
+                counter += 5;
+              }
+
+              for (var ses = 0; ses < data.agenda.items.length; ses++) {
+                var thisAgenda = document.createElement("a");
+                var thisAgendaImages = document.createElement("div");
+                var thisAgendaTitle = document.createElement("p");
+                var thisAgendaTitleTrans = document.createElement("span");
+                var startFrom = new Date(
+                  data.date + " " + data.agenda.items[ses].from
+                );
+                var endTo = new Date(
+                  data.date + " " + data.agenda.items[ses].to
+                );
+                var thisAgendaWidth =
+                  (checkSecondsDiff(startFrom, endTo) / 60 / 5) * 60 - 2;
+                var left1Pos =
+                  (checkSecondsDiff(
+                    new Date(data.date + " " + data.from),
+                    startFrom
+                  ) /
+                    60 /
+                    5) *
+                    60 +
+                  31;
+
+                if (data.agenda.items[ses].people.length) {
+                  for (
+                    var peps = 0;
+                    peps < data.agenda.items[ses].people.length;
+                    peps++
+                  ) {
+                    if (data.agenda.items[ses].people[peps].image) {
+                      var pepsImg = document.createElement("img");
+                      pepsImg.src = data.agenda.items[ses].people[peps].image;
+                      pepsImg.alt = data.agenda.items[ses].people[peps].name;
+                      thisAgendaImages.appendChild(pepsImg);
+                    }
+
+                    continue;
+                  }
+                }
+
+                thisAgendaTitle.textContent = data.agenda.items[ses].title;
+                thisAgendaTitle.style.color = data.agenda.items[ses].textColor;
+                thisAgendaTitleTrans.textContent =
+                  data.agenda.items[ses].translation;
+                thisAgendaTitleTrans.style.color =
+                  data.agenda.items[ses].textColor;
+                thisAgenda.classList.add("agenda");
+                thisAgenda.classList.add("agenda-" + ses);
+                thisAgendaImages.classList.add("images");
+                thisAgenda.appendChild(thisAgendaImages);
+                thisAgendaTitle.appendChild(thisAgendaTitleTrans);
+                thisAgenda.appendChild(thisAgendaTitle);
+                thisAgenda.style.width = thisAgendaWidth + "px";
+                thisAgenda.style.backgroundColor =
+                  data.agenda.items[ses].bgColor;
+                thisAgenda.style.left = left1Pos + "px";
+                thisAgenda.href = data.agenda.items[ses].url;
+                calendarBlocks.append(thisAgenda);
+              }
+            };
+
+            var fillBreakOutBlocks = function fillBreakOutBlocks(data) {
+              var calendarBreakouts = document.querySelector(
+                ".calendar-breakouts"
+              );
+              calendarBreakouts.innerHTML = "";
+
+              if (data.breakouts) {
+                var from = new Date(data.date + " " + data.from);
+                var to = new Date(data.date + " " + data.to);
+                var secondsDiff = checkSecondsDiff(from, to); // seconds (width of the container)
+
+                for (var b = 0; b < data.breakouts.items.length; b++) {
+                  var thisBreakoutParent = document.createElement("div");
+                  var thisBreakout = document.createElement("a");
+                  var thisBreakoutTitle = document.createElement("p");
+                  var thisBreakoutDesc = document.createElement("span");
+                  var thisBreakoutImages = document.createElement("div");
+                  var counter = 0;
+                  var base = parseInt(data.from);
+                  var startFrom = new Date(
+                    data.date + " " + data.breakouts.items[b].from
+                  );
+                  var endTo = new Date(
+                    data.date + " " + data.breakouts.items[b].to
+                  );
+                  var thisBreakoutWidth =
+                    (checkSecondsDiff(startFrom, endTo) / 60 / 5) * 60 - 2;
+                  var left1Pos =
+                    (checkSecondsDiff(
+                      new Date(data.date + " " + data.from),
+                      startFrom
+                    ) /
+                      60 /
+                      5) *
+                      60 +
+                    31;
+
+                  for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
+                    if (counter > 55) {
+                      base++;
+                      counter = 0;
+                    }
+
+                    var block = document.createElement("div");
+                    block.classList.add("block");
+                    thisBreakoutParent.appendChild(block);
+                    counter += 5;
+                  }
+
+                  for (
+                    var bpeps = 0;
+                    bpeps < data.breakouts.items[b].people.length;
+                    bpeps++
+                  ) {
+                    if (data.breakouts.items[b].people[bpeps].imageURL) {
+                      var bpepsImg = document.createElement("img");
+                      bpepsImg.src =
+                        data.breakouts.items[b].people[bpeps].imageURL;
+                      bpepsImg.alt = data.breakouts.items[b].people[bpeps].name;
+                      thisBreakoutImages.appendChild(bpepsImg);
+                    }
+                  }
+
+                  thisBreakoutImages.className = "images";
+                  thisBreakoutDesc.textContent =
+                    data.breakouts.items[b].description;
+                  thisBreakoutTitle.textContent = data.breakouts.items[b].title;
+                  thisBreakoutTitle.appendChild(thisBreakoutDesc);
+                  thisBreakout.className = "breakout breakout-" + b;
+                  thisBreakout.style.width = thisBreakoutWidth + "px";
+                  thisBreakout.style.left = left1Pos + "px";
+                  thisBreakout.style.backgroundColor =
+                    data.breakouts.items[b].bgColor;
+                  thisBreakout.style.color = data.breakouts.items[b].textColor;
+                  thisBreakout.appendChild(thisBreakoutImages);
+                  thisBreakout.appendChild(thisBreakoutTitle);
+                  thisBreakoutParent.className =
+                    "parent-breakouts parent-breakouts-" + b;
+                  thisBreakoutParent.appendChild(thisBreakout);
+                  calendarBreakouts.appendChild(thisBreakoutParent);
+                }
+              }
+            };
+
+            var fillLabels = function fillLabels(data) {
+              var agendaLabel = document.querySelector(
+                ".agenda-calendar-label"
+              );
+              var breakoutLabel = document.querySelector(
+                ".agenda-breakout-label"
+              );
+              var agendaDesc = document.createElement("p");
+              var breakoutDesc = document.createElement("p");
+              agendaLabel.innerHTML = "";
+              breakoutLabel.innerHTML = "";
+              agendaDesc.textContent = "No data";
+              breakoutDesc.textContent = "No data";
+
+              if (data.agenda) {
+                agendaLabel.textContent = data.agenda.name;
+                agendaDesc.textContent = data.agenda.description;
+                agendaDesc.classList.add("desc");
+                agendaLabel.style.height = "60px";
+                agendaLabel.style.backgroundColor = data.agenda.backgroundColor;
+              }
+
+              if (data.breakouts) {
+                breakoutLabel.textContent = data.breakouts.name;
+                breakoutDesc.textContent = data.breakouts.description;
+                breakoutDesc.classList.add("desc");
+                breakoutLabel.style.height =
+                  data.breakouts.items.length * 60 + "px";
+                breakoutLabel.style.backgroundColor =
+                  data.breakouts.backgroundColor;
+              }
+
+              agendaLabel.appendChild(agendaDesc);
+              breakoutLabel.appendChild(breakoutDesc);
+            }; // Tab Switching
+
+            var switchTab = function switchTab() {
+              var tabs = document.querySelectorAll(".tab");
+
+              marker.style.display = "none";
+              tabs.forEach(function (tab) {
+                if (tab.classList.contains("active")) {
+                  tab.classList.remove("active");
+                }
+              });
+              this.classList.add("active");
+
+              if (isDateEqual(eventData[this.dataset.id])) {
+                marker.style.display = "flex";
+              }
+
+              checkTabActive();
+            }; // determine active sessions
+
+            var activeSessions = function activeSessions(data) {
+              var convertedt = calculateBetweenLocalAndDefaultTz(
+                data.defaultCity,
+                data.defaultTimezoneOffset
+              );
+
+              for (
+                var actSes = 0;
+                actSes < data.agenda.items.length;
+                actSes++
+              ) {
+                var startTime = data.agenda.items[actSes].from;
+                var endTime = data.agenda.items[actSes].to;
+                var currentSess = document.querySelector(".agenda-" + actSes);
+                currentSess.style.backgroundColor =
+                  data.agenda.items[actSes].bgColor;
+                var s = startTime.split(":");
+                var dt1 = new Date(
+                  convertedt.getFullYear(),
+                  convertedt.getMonth(),
+                  convertedt.getDate(),
+                  parseInt(s[0]),
+                  parseInt(s[1]),
+                  parseInt(s[2])
+                );
+                var e = endTime.split(":");
+                var dt2 = new Date(
+                  convertedt.getFullYear(),
+                  convertedt.getMonth(),
+                  convertedt.getDate(),
+                  parseInt(e[0]),
+                  parseInt(e[1]),
+                  parseInt(e[2])
+                );
+
+                if (convertedt >= dt1 && convertedt <= dt2) {
+                  currentSess.style.backgroundColor =
+                    data.agenda.items[actSes].highlightBg;
+                }
+              }
+            }; // Time marker
+
+            var startCheckingTime = function startCheckingTime(data) {
+              var from = new Date(data.date + " " + data.from);
+              var to = new Date(data.date + " " + data.to);
+              var secondsDiff = checkSecondsDiff(from, to); // base
+
+              var ceiling = (secondsDiff / 60 / 5) * 60;
+              var secondMove = 0.1333333333333333;
+              var runMarkerRun = setInterval(function () {
+                var oldValue = window
+                  .getComputedStyle(marker, null)
+                  .getPropertyValue("left");
+                var convertedOldValue = parseFloat(oldValue.replace("px", ""));
+                var newValue = convertedOldValue + secondMove;
+
+                if (newValue > ceiling) {
+                  clearInterval(runMarkerRun);
+                  marker.style.display = "none";
+                }
+
+                marker.style.left = newValue + "px";
+                activeSessions(data);
+              }, 1000);
+            }; // Days
+
+            var addDayTab = function addDayTab() {
+              var agendaDays = document.querySelector(".agenda-days");
+              eventData.map(function (day, index) {
+                console.log(day);
+                var tab = document.createElement("li");
+                tab.className = index + " tab";
+                tab.dataset.id = index;
+
+                if (isDateEqual(day)) {
+                  tab.classList.add("active");
+                }
+
+                var p = document.createElement("p");
+                p.textContent =
+                  day.name +
+                  " - " +
+                  new Date(day.date).toLocaleString("default", {
+                    month: "short",
+                  }) +
+                  " " +
+                  new Date(day.date).getDate();
+                tab.appendChild(p);
+                tab.addEventListener("click", switchTab);
+                agendaDays.append(tab);
+              });
+              var tabs = document.querySelectorAll(".tab");
+
+              if (!checkActive(tabs)) {
+                tabs[0].classList.add("active");
+              }
+
+              checkTabActive();
+              dragScroll();
+            };
+
+            var eventData = [
+              {
+                name: "Day 1",
+                date: "09/04/2020", // the date
+                from: "18:00:00", // start time (may expand as a scope)
+                to: "21:30:00", // end time (may expand as a scope)
+                defaultCity: "Philippines", // Default timezone
+                defaultTimezoneOffset: "+8", // in GMT
+                agenda: {
+                  name: "Main Track",
+                  description: "Some description here...",
+                  backgroundColor: "#104836",
+                  items: [
+                    {
+                      from: "18:35:00", // start time (exact)
+                      to: "18:55:00", // end time (exact)
+                      title: "Day 1 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "18:55:00", // start time (exact)
+                      to: "19:10:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "19:15:00", // start time (exact)
+                      to: "19:30:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "19:30:00", // start time (exact)
+                      to: "19:40:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "19:40:00", // start time (exact)
+                      to: "20:10:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                  ],
+                },
+                breakouts: {
+                  name: "Breakouts",
+                  description: "Some description here...",
+                  backgroundColor: "#3cb4ff",
+                  items: [
+                    {
+                      title:
+                        "Breakout 4: Upskilling through eCommerce platforms",
+                      description: "Sample description here...",
+                      from: "18:35:00", // start time (exact)
+                      to: "18:55:00", // end time (exact)
+                      bgColor: "#2c80b5",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      url: "#",
+                      people: [
+                        {
+                          name: "Tony Robbins",
+                          imageURL:
+                            "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+                        },
+                      ],
+                    },
+                    {
+                      title:
+                        "Breakout 4: Upskilling through eCommerce platforms",
+                      description: "Sample description here...",
+                      from: "18:55:00", // start time (exact)
+                      to: "19:30:00", // end time (exact)
+                      bgColor: "#2c80b5",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      url: "#",
+                      people: [
+                        {
+                          name: "Tony Robbins",
+                          imageURL:
+                            "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+              {
+                name: "Day 2",
+                date: "09/05/2020", // the date
+                from: "09:00:00", // start time (may expand as a scope)
+                to: "13:30:00", // end time (may expand as a scope)
+                defaultCity: "Singapore", // Default timezone
+                defaultTimezoneOffset: "+8", // in GMT
+                agenda: {
+                  name: "Main Track",
+                  description: "Some description here...",
+                  backgroundColor: "#104836",
+                  items: [
+                    {
+                      from: "09:30:00", // start time (exact)
+                      to: "09:55:00", // end time (exact)
+                      title: "Day 1 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "09:55:00", // start time (exact)
+                      to: "10:10:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "10:15:00", // start time (exact)
+                      to: "10:30:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "10:30:00", // start time (exact)
+                      to: "10:40:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                    {
+                      from: "10:40:00", // start time (exact)
+                      to: "10:10:00", // end time (exact)
+                      title: "Day 2 highlights and learnings",
+                      translation: "[Translation]",
+                      url: "#",
+                      people: [
+                        {
+                          name: "",
+                          image: "",
+                        },
+                      ],
+                      tooltip: "More info",
+                      bgColor: "#104836", // background color customizable
+                      textColor: "#fff", // text color customizable
+                      highlightBg: "#42d886",
+                    },
+                  ],
+                },
+                breakouts: {
+                  name: "Breakouts",
+                  description: "Some description here...",
+                  backgroundColor: "#3cb4ff",
+                  items: [
+                    {
+                      title:
+                        "Breakout 4: Upskilling through eCommerce platforms",
+                      description: "Sample description here...",
+                      from: "10:35:00", // start time (exact)
+                      to: "10:55:00", // end time (exact)
+                      bgColor: "#2c80b5",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      url: "#",
+                      people: [
+                        {
+                          name: "Tony Robbins",
+                          imageURL:
+                            "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+                        },
+                      ],
+                    },
+                    {
+                      title:
+                        "Breakout 4: Upskilling through eCommerce platforms",
+                      description: "Sample description here...",
+                      from: "10:55:00", // start time (exact)
+                      to: "10:30:00", // end time (exact)
+                      bgColor: "#2c80b5",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      url: "#",
+                      people: [
+                        {
+                          name: "Tony Robbins",
+                          imageURL:
+                            "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              },
+            ];
+            var marker = document.querySelector(".marker");
+            marker.style.display = "none";
+            var txtTimeZone = document.querySelector(".agenda-timezone");
+            txtTimeZone.textContent =
+              "All time displayed in: " +
+              eventData[0].defaultCity +
+              " GMT " +
+              eventData[0].defaultTimezoneOffset;
+            theAgendaUI.style.display = "block";
+            addDayTab();
+            clearInterval(checkAgendaTarget);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
