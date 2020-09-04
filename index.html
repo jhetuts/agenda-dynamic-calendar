@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      html {
+        font-family: Montserrat;
+      }
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        list-style: none;
+      }
+
+      .agenda-wrapper {
+        display: flex;
+        width: 100%;
+        max-width: 900px;
+        margin: auto;
+        flex-direction: column;
+      }
+
+      .agenda-head {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .agenda-days {
+        display: flex;
+        flex-direction: row;
+      }
+      .agenda-days li {
+        padding: 10px;
+        background: #e8e8e8;
+        color: #2a2a2a;
+        cursor: pointer;
+      }
+      .agenda-days li:first-child {
+        border-top-left-radius: 8px;
+      }
+      .agenda-days li:last-child {
+        border-top-right-radius: 8px;
+      }
+      .agenda-days li.active {
+        border-top: solid 2px #42d886;
+        background: #f5f5f5;
+      }
+      .agenda-body,
+      .col-1,
+      .col-2 {
+        display: flex;
+        background: #f5f5f5;
+      }
+      .agenda-body .col-1 {
+        width: 175px;
+      }
+      .agenda-body .col-2 {
+        position: relative;
+        width: calc(100% - 175px);
+        overflow-x: auto;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: wrap;
+      }
+      .col-2 .marker {
+        position: absolute;
+        height: 80%;
+        bottom: 0;
+        display: flex;
+        width: 40px;
+        align-items: flex-start;
+        justify-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        text-align: center;
+        z-index: 1;
+      }
+      .col-2 .marker i {
+        font-style: normal;
+        font-size: 12px;
+        background: #f02849;
+        color: #fff;
+        line-height: 1;
+      }
+      .col-2 .marker i:first-child {
+        width: 100%;
+        padding: 3px;
+        border-radius: 3px;
+      }
+      .col-2 .marker i.line {
+        width: 0.67px;
+        height: calc(100% - 18px);
+      }
+      .hour-denomination,
+      .calendar-blocks {
+        display: flex;
+        flex-direction: row;
+      }
+      .hour-denomination .time,
+      .calendar-blocks .block {
+        display: flex;
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+        align-items: center;
+        justify-content: center;
+      }
+      .calendar-blocks .block {
+        position: relative;
+        border-bottom: 2px solid #eaeaea;
+      }
+      .calendar-blocks .block:before {
+        content: "";
+        width: 2px;
+        height: 100%;
+        background: #eaeaea;
+      }
+    </style>
+    <div class="agenda-wrapper">
+      <div class="agenda-head">
+        <ul class="agenda-days"></ul>
+        <div class="agenda-timezone"></div>
+      </div>
+      <div class="agenda-body">
+        <div class="col-1">
+          <div class="space"></div>
+        </div>
+        <div class="col-2">
+          <span class="marker"><i>Now</i><i class="line"></i></span>
+          <div class="agenda-hours">
+            <div class="hour-denomination"></div>
+          </div>
+          <div class="agenda-calendar">
+            <div class="calendar-blocks"></div>
+          </div>
+          <div class="agenda-breakout">
+            <div class="calendar-breakouts"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      var eventData = [
+        {
+          name: "Day 4",
+          date: "09/04/2020", // the date
+          from: "09:00:00", // start time (may expand as a scope)
+          to: "10:40:00", // end time (may expand as a scope)
+          defaultCity: "Philippines", // Default timezone
+          defaultTimezoneOffset: "+8", // in GMT
+          agendas: [
+            {
+              from: "15:00:00", // start time (exact)
+              to: "15:05:00", // end time (exact)
+              name: "Launching",
+              tooltip: "More info",
+              bgColor: "#104836", // background color customizable
+              textColor: "#fff", // text color customizable
+            },
+            {
+              from: "15:05:00",
+              to: "15:35:00",
+              name: "Plenary: Fintech and Women",
+              tooltip: "More info",
+              bgColor: "#42d886",
+              textColor: "#fff",
+            },
+            {
+              from: "15:35:00",
+              to: "15:45:00",
+              name: "Panel Discussion, with Q&A",
+              tooltip: "More info",
+              bgColor: "#104836",
+              textColor: "#fff",
+            },
+            {
+              from: "15:45:00",
+              to: "15:50:00",
+              name: "Break with sponsor video",
+              tooltip: "More info",
+              bgColor: "#104836",
+              textColor: "#fff",
+            },
+            {
+              from: "15:55:00",
+              to: "16:10:00",
+              name: "Plenary introduction...",
+              tooltip: "More info",
+              bgColor: "#104836",
+              textColor: "#fff",
+            },
+          ],
+        },
+      ];
+      const marker = document.querySelector(".marker");
+      marker.style.display = "none";
+
+      function isDateEqual(data) {
+        var y = calculateBetweenLocalAndDefaultTz(
+          data.defaultCity,
+          data.defaultTimezoneOffset
+        );
+
+        const today = new Date(y);
+        const dd = String(today.getDate()).padStart(2, "0");
+        const mm = String(today.getMonth() + 1).padStart(2, "0");
+        const yyyy = today.getFullYear();
+        const currentDay = new Date(mm + "/" + dd + "/" + yyyy);
+        const testDate = new Date(data.date);
+        console.log(testDate.getTime() === currentDay.getTime());
+
+        if (testDate.getTime() === currentDay.getTime()) {
+          checkRangeInSession(data);
+        }
+
+        return testDate.getTime() === currentDay.getTime();
+      }
+
+      function checkRangeInSession(data) {
+        var dt = calculateBetweenLocalAndDefaultTz(
+          data.defaultCity,
+          data.defaultTimezoneOffset
+        );
+
+        var startTime = data.from;
+        var endTime = data.to;
+
+        var s = startTime.split(":");
+        var dt1 = new Date(
+          dt.getFullYear(),
+          dt.getMonth(),
+          dt.getDate(),
+          parseInt(s[0]),
+          parseInt(s[1]),
+          parseInt(s[2])
+        );
+
+        var e = endTime.split(":");
+        var dt2 = new Date(
+          dt.getFullYear(),
+          dt.getMonth(),
+          dt.getDate(),
+          parseInt(e[0]),
+          parseInt(e[1]),
+          parseInt(e[2])
+        );
+
+        if (dt >= dt1 && dt <= dt2) {
+          console.log("within range");
+          marker.style.display = "flex";
+          const from = new Date(data.date + " " + data.from);
+          const to = new Date(dt);
+          const secondsDiff = checkSecondsDiff(from, to);
+          const markerPos = (secondsDiff / 60 / 5) * 40;
+          marker.style.left = markerPos + "px";
+
+          startCheckingTime(data);
+        } else {
+          console.log("not in range");
+        }
+      }
+
+      function calculateBetweenLocalAndDefaultTz(city, offset) {
+        var d = new Date();
+        var utc = d.getTime() + d.getTimezoneOffset() * 60000;
+        var nd = new Date(utc + 3600000 * offset);
+        return nd;
+      }
+
+      function checkActive(tabs) {
+        let withActive = false;
+
+        tabs.forEach((tab) => {
+          if (tab.classList.contains("active")) {
+            withActive = true;
+          }
+        });
+
+        return withActive;
+      }
+
+      function checkSecondsDiff(a, b) {
+        if (a.getTime() < b.getTime()) {
+          var diff = (a.getTime() - b.getTime()) / 1000;
+          diff /= 60 * 60;
+          return Math.abs(diff * 60 * 60);
+        }
+      }
+
+      // Filling contents
+      function checkTabActive() {
+        const tabs = document.querySelectorAll(".tab");
+        tabs.forEach((tab) => {
+          if (tab.classList.contains("active")) {
+            fillElements(eventData[tab.dataset.id]);
+          }
+        });
+      }
+
+      function fillElements(data) {
+        fillTimeTable(data);
+        fillCalendarBlocks(data);
+        // fillBreakOutBlocks(data.breakouts);
+      }
+
+      function fillTimeTable(data) {
+        const hourDenomination = document.querySelector(".hour-denomination");
+        hourDenomination.innerHTML = "";
+
+        const from = new Date(data.date + " " + data.from);
+        const to = new Date(data.date + " " + data.to);
+        const secondsDiff = checkSecondsDiff(from, to); // base
+        const widthOfContainer = (secondsDiff / 60 / 5 + 1) * 40;
+
+        let counter = 0;
+        let base = parseInt(data.from);
+        for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
+          if (counter > 55) {
+            base++;
+            counter = 0;
+          }
+
+          const timeMarks = document.createElement("div");
+          timeMarks.classList.add("time");
+          timeMarks.innerHTML = base + ":" + ("0" + counter).slice(-2);
+
+          hourDenomination.appendChild(timeMarks);
+          counter += 5;
+        }
+      }
+
+      function fillCalendarBlocks(data) {
+        const calendarBlocks = document.querySelector(".calendar-blocks");
+        calendarBlocks.innerHTML = "";
+
+        const from = new Date(data.date + " " + data.from);
+        const to = new Date(data.date + " " + data.to);
+        const secondsDiff = checkSecondsDiff(from, to); // seconds (width of the container)
+
+        let counter = 0;
+        let base = parseInt(data.from);
+        for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
+          if (counter > 55) {
+            base++;
+            counter = 0;
+          }
+
+          const block = document.createElement("div");
+          block.classList.add("block");
+
+          calendarBlocks.appendChild(block);
+          counter += 5;
+        }
+      }
+
+      function fillBreakOutBlocks(breakouts) {
+        for (let b = 0; b < breakouts.length; b++) {
+          // const b
+        }
+      }
+      // Tab Switching
+      function switchTab() {
+        const tabs = document.querySelectorAll(".tab");
+        tabs.forEach((tab) => {
+          if (tab.classList.contains("active")) {
+            tab.classList.remove("active");
+          }
+        });
+        this.classList.add("active");
+        checkTabActive();
+      }
+
+      // Days
+      function addDayTab() {
+        const agendaDays = document.querySelector(".agenda-days");
+        eventData.map((day, index) => {
+          const tab = document.createElement("li");
+          tab.className = index + " tab";
+          tab.dataset.id = index;
+
+          console.log(day);
+
+          if (isDateEqual(day)) {
+            tab.classList.add("active");
+          }
+
+          const content = `<p>${day.name} - ${day.date}</p>`;
+
+          tab.innerHTML = content;
+
+          tab.addEventListener("click", switchTab);
+          agendaDays.append(tab);
+        });
+
+        const tabs = document.querySelectorAll(".tab");
+        if (!checkActive(tabs)) {
+          tabs[0].classList.add("active");
+        }
+
+        checkTabActive();
+      }
+
+      function startCheckingTime(data) {
+        const from = new Date(data.date + " " + data.from);
+        const to = new Date(data.date + " " + data.to);
+        const secondsDiff = checkSecondsDiff(from, to); // base
+        const ceiling = (secondsDiff / 60 / 5) * 40;
+
+        console.log(ceiling);
+
+        var secondMove = 0.1333333333333333;
+
+        var runMarkerRun = setInterval(function () {
+          oldValue = window
+            .getComputedStyle(marker, null)
+            .getPropertyValue("left");
+          convertedOldValue = parseFloat(oldValue.replace("px", ""));
+          newValue = convertedOldValue + secondMove;
+
+          if (newValue > ceiling) {
+            clearInterval(runMarkerRun);
+            marker.style.display = "none";
+          }
+
+          marker.style.left = newValue + "px";
+        }, 1000);
+      }
+
+      addDayTab();
+    </script>
+  </body>
+</html>
