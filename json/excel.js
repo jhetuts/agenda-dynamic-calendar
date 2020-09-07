@@ -1,6 +1,6 @@
 var eventData = [
   {
-    name: "Day 4",
+    name: "Day 1",
     date: "10/06/2020", // the date
     from: "09:30:00", // start time (may expand as a scope)
     to: "13:00:00", // end time (may expand as a scope)
@@ -15,11 +15,11 @@ var eventData = [
           from: "10:00:00", // start time (exact)
           to: "10:10:00", // end time (exact)
           title: "Championing the female economy",
-          translation: "[Translation]",
+          translation: "Potenciando la economía femenina",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
+              name: "",
               image: "",
             },
           ],
@@ -27,66 +27,71 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "2",
         },
         {
           from: "10:10:00", // start time (exact)
           to: "10:20:00", // end time (exact)
           title: "Keynote",
-          translation: "[Translation]",
+          translation: "Discurso de apertura",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Keynote",
+          numOfSpeakers: "1",
         },
         {
           from: "10:20:00", // start time (exact)
           to: "10:30:00", // end time (exact)
           title: "Data driving the female economy",
-          translation: "[Translation]",
+          translation: "Datos que impulsan la economía femenina",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Presentation",
+          numOfSpeakers: "1",
         },
         {
-          from: "10:20:00", // start time (exact)
+          from: "10:30:00", // start time (exact)
           to: "11:15:00", // end time (exact)
           title: "The opportunity of championing the female economy",
-          translation: "[Translation]",
+          translation: "La oportunidad de potenciar la economía femenina",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Panel Discussion",
+          numOfSpeakers: "5",
         },
         {
           from: "11:15:00", // start time (exact)
           to: "11:25:00", // end time (exact)
           title: "Break",
-          translation: "[Translation]",
+          translation: "",
           url: "#",
           people: [
             {
@@ -98,13 +103,16 @@ var eventData = [
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "",
+          numOfSpeakers: "",
         },
         {
           from: "11:25:00", // start time (exact)
           to: "11:35:00", // end time (exact)
           title:
             "Accelerating women's economic power through non-financial services",
-          translation: "[Translation]",
+          translation:
+            "Acelerando el poder económico de las mujeres a través de los servicios no financieros",
           url: "#",
           people: [
             {
@@ -116,12 +124,14 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Fireside Chat",
+          numOfSpeakers: "2",
         },
         {
           from: "12:05:00", // start time (exact)
           to: "12:15:00", // end time (exact)
           title: "Regroup and consolidation",
-          translation: "[Translation]",
+          translation: "Reagrupamiento y consolidación",
           url: "#",
           people: [
             {
@@ -133,12 +143,15 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
         {
           from: "12:15:00", // start time (exact)
           to: "12:35:00", // end time (exact)
           title: "Wealth tech: A new way to make money",
-          translation: "[Translation]",
+          translation:
+            "Tecnología en la gestión de patrimonios: una nueva forma de ganar dinero",
           url: "#",
           people: [
             {
@@ -150,12 +163,14 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "",
+          numOfSpeakers: "",
         },
         {
           from: "12:35:00", // start time (exact)
           to: "12:55:00", // end time (exact)
           title: "Day 1 highlights and learnings",
-          translation: "[Translation]",
+          translation: "Puntos destacados y aprendizajes del día 1",
           url: "#",
           people: [
             {
@@ -167,6 +182,8 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
       ],
     },
@@ -176,8 +193,9 @@ var eventData = [
       backgroundColor: "#3cb4ff",
       items: [
         {
-          title: "Breakout 1: NFS business case & how to measure it (Spanish)",
-          description: "Sample description here...",
+          title: "-",
+          translation:
+            "Sesión de Trabajo 1: El caso de negocios y la importancia de medir los servicios no financieros  (español)",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
@@ -186,67 +204,69 @@ var eventData = [
           url: "#",
           people: [
             {
-              name: "Nick Vujicic",
-              imageURL:
-                "https://images.squarespace-cdn.com/content/v1/5a1d6210f14aa168f52b486d/1538066296144-8IZYHZWLICRMCQDVNDQ8/ke17ZwdGBToddI8pDm48kNO2SymwcR0CNt03aX8zdCd7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QHyNOqBUUEtDDsRWrJLTmyh-8_5GJNvrfz4o4yOfLS6zQbzUiTKHw9oGJVKerm66NTpMeMsHjVpXC93GFBavO/nick.JPG",
-            },
-            {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "3",
         },
         {
           title: "Breakout 2: NFS business case & how to measure it (English)",
-          description: "Sample description here...",
+          translation:
+            "Sesión de Trabajo 2: El caso de negocios y la importancia de medir los servicios no financieros  (inglés)",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
-          bgColor: "#2c80b5",
+          bgColor: "#3cb4ff",
           textColor: "#fff",
           highlightBg: "#42d886",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "3",
         },
         {
-          title: "Breakout 3: Tapping into SME ecosystem",
-          description: "Sample description here...",
+          title: "Breakout 3: Tapping into SME ecoystem",
+          translation:
+            "Sesión de trabajo 3: Aprovechando el ecosistema de las PYMEs",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
-          bgColor: "#2c80b5",
+          bgColor: "#3cb4ff",
           textColor: "#fff",
           highlightBg: "#42d886",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "3",
         },
         {
           title: "Breakout 4: Upskilling through eCommerce platforms",
-          description: "Sample description here...",
+          translation:
+            "Sesión de trabajo 4: Mejorando las habilidades a través de las plataformas de comercio electrónico",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
-          bgColor: "#2c80b5",
+          bgColor: "#3cb4ff",
           textColor: "#fff",
           highlightBg: "#42d886",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "4",
         },
       ],
     },
@@ -268,11 +288,12 @@ var eventData = [
           to: "07:05:00", // end time (exact)
           title:
             "The transformational opportunity of fintech on the female economy",
-          translation: "[Translation]",
+          translation:
+            "La oportunidad de la transformación de las fintech en la economía femenina",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
+              name: "",
               image: "",
             },
           ],
@@ -280,67 +301,74 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
         {
           from: "07:05:00", // start time (exact)
           to: "07:25:00", // end time (exact)
           title: "Blue sky vision - the impact of fintech on women's markets",
-          translation: "[Translation]",
+          translation:
+            "Visión General: el impacto de las fintech en el segmento mujer",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Fireside Chat",
+          numOfSpeakers: "2",
         },
         {
           from: "07:25:00", // start time (exact)
           to: "07:45:00", // end time (exact)
           title: "Alliance fintech research",
-          translation: "[Translation]",
+          translation: "Investigación fintech de la Alianza",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Fireside Chat",
+          numOfSpeakers: "2",
         },
         {
           from: "07:45:00", // start time (exact)
           to: "08:30:00", // end time (exact)
           title:
             "How fintechs are and can support the full financial inclusion of women",
-          translation: "[Translation]",
+          translation:
+            "Cómo las fintech están y pueden apoyar a la plena inclusión financiera de las mujeres",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Panel Discussion",
+          numOfSpeakers: "5",
         },
         {
           from: "08:30:00", // start time (exact)
           to: "08:35:00", // end time (exact)
           title: "Break",
-          translation: "[Translation]",
+          translation: "",
           url: "#",
           people: [
             {
@@ -352,12 +380,14 @@ var eventData = [
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "",
+          numOfSpeakers: "",
         },
         {
           from: "08:35:00", // start time (exact)
           to: "08:40:00", // end time (exact)
-          title: "Re-imagining fintech as gender intelligent",
-          translation: "[Translation]",
+          title: "Reimagining fintech as gender intelligent",
+          translation: "Reimaginando a las fintechs con inteligencia de género",
           url: "#",
           people: [
             {
@@ -369,12 +399,14 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
         {
           from: "09:15:00", // start time (exact)
           to: "09:25:00", // end time (exact)
           title: "Regroup and consolidation",
-          translation: "[Translation]",
+          translation: "Reagrupamiento y consolidación",
           url: "#",
           people: [
             {
@@ -386,12 +418,14 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
         {
           from: "09:25:00", // start time (exact)
           to: "09:55:00", // end time (exact)
           title: "e-Hackathon pitches & final vote",
-          translation: "[Translation]",
+          translation: "Presentaciones finales del e-Hackathon y votación fina",
           url: "#",
           people: [
             {
@@ -403,12 +437,14 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Presentation",
+          numOfSpeakers: "2",
         },
         {
           from: "09:55:00", // start time (exact)
           to: "10:05:00", // end time (exact)
           title: "Day 2 highlights and learnings",
-          translation: "[Translation]",
+          translation: "Puntos destacados y aprendizajes del día 2",
           url: "#",
           people: [
             {
@@ -420,6 +456,8 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
       ],
     },
@@ -430,7 +468,8 @@ var eventData = [
       items: [
         {
           title: "Breakout 1: Data bias & course corrections",
-          description: "[Translation Missing]",
+          translation:
+            "Sesión de trabajo 1: sesgo de datos y cambios de procesos",
           from: "08:40:00", // start time (exact)
           to: "09:15:00", // end time (exact)
           bgColor: "#3cb4ff",
@@ -439,69 +478,71 @@ var eventData = [
           url: "#",
           people: [
             {
-              name: "Nick Vujicic",
-              imageURL:
-                "https://images.squarespace-cdn.com/content/v1/5a1d6210f14aa168f52b486d/1538066296144-8IZYHZWLICRMCQDVNDQ8/ke17ZwdGBToddI8pDm48kNO2SymwcR0CNt03aX8zdCd7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z5QHyNOqBUUEtDDsRWrJLTmyh-8_5GJNvrfz4o4yOfLS6zQbzUiTKHw9oGJVKerm66NTpMeMsHjVpXC93GFBavO/nick.JPG",
-            },
-            {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "3",
         },
         {
           title:
             "Breakout 2: Incentives & ecosystem support - defining stakeholder roles",
-          description: "[Translation Missing]",
+          translation:
+            "Sesión de trabajo 2: Incentivos y apoyo al ecosistema: definiendo los roles de los grupos de interés",
           from: "08:40:00", // start time (exact)
           to: "09:15:00", // end time (exact)
-          bgColor: "#2c80b5",
+          bgColor: "#3cb4ff",
           textColor: "#fff",
           highlightBg: "#42d886",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "4",
         },
         {
           title:
             "Breakout 3: Business case For gender intelligent fintech (Spanish)",
-          description: "[Translation Missing]",
+          translation:
+            "Sesión de trabajo 3: El caso de negocio para las fintech con inteligencia de género",
           from: "08:40:00", // start time (exact)
           to: "09:15:00", // end time (exact)
-          bgColor: "#2c80b5",
+          bgColor: "#3cb4ff",
           textColor: "#fff",
           highlightBg: "#42d886",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "4",
         },
         {
           title: "Breakout 4: Investing in women-focused fintechs",
-          description: "[Translation Missing]",
+          translation:
+            "Sesión de trabajo 4: Invirtiendo en las fintechs centradas en las mujeres",
           from: "08:40:00", // start time (exact)
           to: "09:15:00", // end time (exact)
-          bgColor: "#2c80b5",
+          bgColor: "#3cb4ff",
           textColor: "#fff",
           highlightBg: "#42d886",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              imageURL:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              imageURL: "",
             },
           ],
+          sessionType: "Breakout Session",
+          numOfSpeakers: "3",
         },
       ],
     },
@@ -522,11 +563,11 @@ var eventData = [
           from: "09:00:00", // start time (exact)
           to: "09:05:00", // end time (exact)
           title: "The future of work",
-          translation: "[Translation]",
+          translation: "El futuro del trabajo",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
+              name: "",
               image: "",
             },
           ],
@@ -534,86 +575,95 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
         {
           from: "09:05:00", // start time (exact)
           to: "09:25:00", // end time (exact)
           title:
             "Building the workforce of tomorrow - diversity & inclusion post pandemic",
-          translation: "[Translation]",
+          translation:
+            "Construyendo la fuerza laboral de mañana: diversidad e inclusión después de la pandemia",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Fireside Chat",
+          numOfSpeakers: "2",
         },
         {
           from: "09:25:00", // start time (exact)
-          to: "10:05:00", // end time (exact)
+          to: "10:10:00", // end time (exact)
           title:
             "Building the workforce of tomorrow - diversity & inclusion post pandemic",
-          translation: "[Translation]",
+          translation: "",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Fireside Chat",
+          numOfSpeakers: "2",
         },
         {
-          from: "10:05:00", // start time (exact)
+          from: "10:10:00", // start time (exact)
           to: "10:15:00", // end time (exact)
           title: "Break",
-          translation: "[Translation]",
+          translation: "",
           url: "#",
           people: [
             {
-              name: "Tony Robbins",
-              image:
-                "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+              name: "",
+              image: "",
+            },
+          ],
+          tooltip: "More info",
+          bgColor: "#104836", // background color customizable
+          textColor: "#fff", // text color customizable
+          highlightBg: "#42d886",
+          sessionType: "Panel Discussion",
+          numOfSpeakers: "5",
+        },
+        {
+          from: "10:15:00", // start time (exact)
+          to: "10:50:00", // end time (exact)
+          title: "Interactive session or gamification",
+          translation: "Sesión interactiva o gamificación",
+          url: "#",
+          people: [
+            {
+              name: "",
+              image: "",
             },
           ],
           tooltip: "More info",
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
-        },
-        {
-          from: "10:15:00", // start time (exact)
-          to: "10:50:00", // end time (exact)
-          title: "Interactive session or gamification",
-          translation: "[Translation]",
-          url: "#",
-          people: [
-            {
-              name: "",
-              image: "",
-            },
-          ],
-          tooltip: "More info",
-          bgColor: "#104836", // background color customizable
-          textColor: "#fff", // text color customizable
-          highlightBg: "#42d886",
+          sessionType: "",
+          numOfSpeakers: "",
         },
         {
           from: "10:50:00", // start time (exact)
           to: "11:35:00", // end time (exact)
           title:
             "Doing Business 2020 & beyond: serving customers in the new normal",
-          translation: "[Translation]",
+          translation:
+            "Haciendo negocios 2020 y más allá: sirviendo a los clientes en la nueva normalidad",
           url: "#",
           people: [
             {
@@ -625,12 +675,14 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
         {
           from: "11:35:00", // start time (exact)
           to: "11:55:00", // end time (exact)
           title: "Women SME platform",
-          translation: "[Translation]",
+          translation: "Plataforma PYMEs propiedad de mujeres",
           url: "#",
           people: [
             {
@@ -642,12 +694,14 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Remarks",
+          numOfSpeakers: "1",
         },
         {
           from: "11:55:00", // start time (exact)
           to: "12:05:00", // end time (exact)
           title: "Closing remarks",
-          translation: "[Translation]",
+          translation: "Palabras de clausura",
           url: "#",
           people: [
             {
@@ -659,6 +713,8 @@ var eventData = [
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
+          sessionType: "Presentation",
+          numOfSpeakers: "2",
         },
       ],
     },
