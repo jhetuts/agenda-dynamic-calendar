@@ -23,7 +23,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -42,7 +42,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -61,7 +61,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -80,7 +80,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -99,7 +99,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -120,7 +120,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -139,7 +139,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -159,7 +159,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -178,7 +178,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -200,7 +200,7 @@ var eventData = [
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -219,7 +219,7 @@ var eventData = [
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -238,7 +238,7 @@ var eventData = [
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -257,7 +257,7 @@ var eventData = [
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -297,7 +297,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -317,7 +317,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -336,7 +336,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -357,7 +357,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -376,7 +376,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -395,7 +395,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -414,7 +414,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -433,7 +433,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -452,7 +452,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -474,7 +474,7 @@ var eventData = [
           to: "09:15:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -494,7 +494,7 @@ var eventData = [
           to: "09:15:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -514,7 +514,7 @@ var eventData = [
           to: "09:15:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -533,7 +533,7 @@ var eventData = [
           to: "09:15:00", // end time (exact)
           bgColor: "#3cb4ff",
           textColor: "#fff",
-          highlightBg: "#42d886",
+          highlightBg: "#6bd5ff",
           url: "#",
           people: [
             {
@@ -571,7 +571,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -592,7 +592,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -612,7 +612,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -631,7 +631,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -650,7 +650,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -671,7 +671,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -690,7 +690,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
@@ -709,7 +709,7 @@ var eventData = [
               image: "",
             },
           ],
-          tooltip: "More info",
+          tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",

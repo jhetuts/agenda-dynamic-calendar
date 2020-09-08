@@ -99,13 +99,14 @@
       .agenda-body .col-1 div {
         display: flex;
         width: 100%;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         color: #fff;
         font-size: 12px;
         flex-direction: column;
         padding: 10px;
         text-align: center;
+        font-weight: 700;
       }
       .agenda-body .col-1 .desc {
         font-size: 10px;
@@ -155,7 +156,7 @@
         border-radius: 3px;
       }
       .col-2 .marker i.line {
-        width: 0.67px;
+        width: 0.2px;
         height: calc(100% - 18px);
       }
       .col-2 .mid-col-1 {
@@ -620,6 +621,7 @@
                   thisBreakoutImages.className = "images";
                   thisBreakoutDesc.textContent =
                     data.breakouts.items[b].translation;
+                  thisBreakoutDesc.style.fontStyle = "italic";
                   thisBreakoutTitle.textContent = data.breakouts.items[b].title;
                   thisBreakoutTitle.appendChild(thisBreakoutDesc);
                   thisBreakout.className = "breakout breakout-" + b;
@@ -655,6 +657,7 @@
                 agendaLabel.textContent = data.agenda.name;
                 agendaDesc.textContent = data.agenda.description;
                 agendaDesc.classList.add("desc");
+                agendaDesc.style.fontStyle = "italic";
                 agendaLabel.style.height = "60px";
                 agendaLabel.style.backgroundColor = data.agenda.backgroundColor;
               }
@@ -662,6 +665,7 @@
                 breakoutLabel.textContent = data.breakouts.name;
                 breakoutDesc.textContent = data.breakouts.description;
                 breakoutDesc.classList.add("desc");
+                breakoutDesc.style.fontStyle = "italic";
                 breakoutLabel.style.height =
                   data.breakouts.items.length * 60 + "px";
                 breakoutLabel.style.backgroundColor =
@@ -717,6 +721,45 @@
                 if (convertedt >= dt1 && convertedt <= dt2) {
                   currentSess.style.backgroundColor =
                     data.agenda.items[actSes].highlightBg;
+                }
+              }
+
+              if (data.breakouts) {
+                for (
+                  var actBrk = 0;
+                  actBrk < data.breakouts.items.length;
+                  actBrk++
+                ) {
+                  var startTime = data.breakouts.items[actBrk].from;
+                  var endTime = data.breakouts.items[actBrk].to;
+                  var currentBreakout = document.querySelector(
+                    ".breakout-" + actBrk
+                  );
+                  currentBreakout.style.backgroundColor =
+                    data.breakouts.items[actBrk].bgColor;
+
+                  var s = startTime.split(":");
+                  var dt1 = new Date(
+                    convertedt.getFullYear(),
+                    convertedt.getMonth(),
+                    convertedt.getDate(),
+                    parseInt(s[0]),
+                    parseInt(s[1]),
+                    parseInt(s[2])
+                  );
+                  var e = endTime.split(":");
+                  var dt2 = new Date(
+                    convertedt.getFullYear(),
+                    convertedt.getMonth(),
+                    convertedt.getDate(),
+                    parseInt(e[0]),
+                    parseInt(e[1]),
+                    parseInt(e[2])
+                  );
+                  if (convertedt >= dt1 && convertedt <= dt2) {
+                    currentBreakout.style.backgroundColor =
+                      data.breakouts.items[actBrk].highlightBg;
+                  }
                 }
               }
             };
@@ -932,7 +975,7 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
                       url: "#",
                       people: [{ name: "", imageURL: "" }],
                       sessionType: "Breakout Session",
@@ -948,7 +991,7 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
                       url: "#",
                       people: [{ name: "", imageURL: "" }],
                       sessionType: "Breakout Session",
@@ -963,7 +1006,7 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
                       url: "#",
                       people: [{ name: "", imageURL: "" }],
                       sessionType: "Breakout Session",
@@ -979,7 +1022,7 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
                       url: "#",
                       people: [{ name: "", imageURL: "" }],
                       sessionType: "Breakout Session",
@@ -992,7 +1035,7 @@
                 name: "Day 2",
                 date: "09/08/2020",
                 from: "06:30:00",
-                to: "12:30:00",
+                to: "20:00:00",
                 defaultCity: "Singapore",
                 defaultTimezoneOffset: "+8",
                 agenda: {
@@ -1150,7 +1193,7 @@
                     },
                     {
                       from: "12:05:00",
-                      to: "12:10:00",
+                      to: "12:20:00",
                       title: "Day 2 highlights and learnings",
                       translation: "Puntos destacados y aprendizajes del día 2",
                       url: "#",
@@ -1163,8 +1206,8 @@
                       numOfSpeakers: "1",
                     },
                     {
-                      from: "12:10:00",
-                      to: "12:15:00",
+                      from: "12:20:00",
+                      to: "12:30:00",
                       title: "Day 2 highlights and learnings",
                       translation: "Puntos destacados y aprendizajes del día 2",
                       url: "#",
@@ -1177,8 +1220,78 @@
                       numOfSpeakers: "1",
                     },
                     {
-                      from: "12:15:00",
-                      to: "12:18:00",
+                      from: "13:00:00",
+                      to: "13:40:00",
+                      title: "Day 2 highlights and learnings",
+                      translation: "Puntos destacados y aprendizajes del día 2",
+                      url: "#",
+                      people: [{ name: "", image: "" }],
+                      tooltip: "",
+                      bgColor: "#104836",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      sessionType: "Remarks",
+                      numOfSpeakers: "1",
+                    },
+                    {
+                      from: "13:40:00",
+                      to: "14:10:00",
+                      title: "Day 2 highlights and learnings",
+                      translation: "Puntos destacados y aprendizajes del día 2",
+                      url: "#",
+                      people: [{ name: "", image: "" }],
+                      tooltip: "",
+                      bgColor: "#104836",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      sessionType: "Remarks",
+                      numOfSpeakers: "1",
+                    },
+                    {
+                      from: "14:40:00",
+                      to: "15:10:00",
+                      title: "Day 2 highlights and learnings",
+                      translation: "Puntos destacados y aprendizajes del día 2",
+                      url: "#",
+                      people: [{ name: "", image: "" }],
+                      tooltip: "",
+                      bgColor: "#104836",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      sessionType: "Remarks",
+                      numOfSpeakers: "1",
+                    },
+                    {
+                      from: "15:40:00",
+                      to: "16:10:00",
+                      title: "Day 2 highlights and learnings",
+                      translation: "Puntos destacados y aprendizajes del día 2",
+                      url: "#",
+                      people: [{ name: "", image: "" }],
+                      tooltip: "",
+                      bgColor: "#104836",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      sessionType: "Remarks",
+                      numOfSpeakers: "1",
+                    },
+                    {
+                      from: "17:40:00",
+                      to: "18:10:00",
+                      title: "Day 2 highlights and learnings",
+                      translation: "Puntos destacados y aprendizajes del día 2",
+                      url: "#",
+                      people: [{ name: "", image: "" }],
+                      tooltip: "",
+                      bgColor: "#104836",
+                      textColor: "#fff",
+                      highlightBg: "#42d886",
+                      sessionType: "Remarks",
+                      numOfSpeakers: "1",
+                    },
+                    {
+                      from: "19:40:00",
+                      to: "19:50:00",
                       title: "Day 2 highlights and learnings",
                       translation: "Puntos destacados y aprendizajes del día 2",
                       url: "#",
@@ -1206,9 +1319,15 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
                       url: "#",
-                      people: [{ name: "", imageURL: "" }],
+                      people: [
+                        {
+                          name: "Tonny Robbins",
+                          imageURL:
+                            "https://pbs.twimg.com/profile_images/1257396956881498114/Fj13PSh-_400x400.jpg",
+                        },
+                      ],
                       sessionType: "Breakout Session",
                       numOfSpeakers: "3",
                     },
@@ -1222,7 +1341,7 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
                       url: "#",
                       people: [{ name: "", imageURL: "" }],
                       sessionType: "Breakout Session",
@@ -1238,7 +1357,7 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
                       url: "#",
                       people: [{ name: "", imageURL: "" }],
                       sessionType: "Breakout Session",
@@ -1253,7 +1372,92 @@
                       bgColor: "#3cb4ff",
                       tooltip: "",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#6bd5ff",
+                      url: "#",
+                      people: [{ name: "", imageURL: "" }],
+                      sessionType: "Breakout Session",
+                      numOfSpeakers: "3",
+                    },
+                    {
+                      title: "Breakout 4: Investing in women-focused fintechs",
+                      translation:
+                        "Sesión de trabajo 4: Invirtiendo en las fintechs centradas en las mujeres",
+                      from: "13:00:00",
+                      to: "13:40:00",
+                      bgColor: "#3cb4ff",
+                      tooltip: "",
+                      textColor: "#fff",
+                      highlightBg: "#6bd5ff",
+                      url: "#",
+                      people: [{ name: "", imageURL: "" }],
+                      sessionType: "Breakout Session",
+                      numOfSpeakers: "3",
+                    },
+                    {
+                      title: "Sample breakout title",
+                      translation: "Sample breakout title",
+                      from: "13:40:00",
+                      to: "14:20:00",
+                      bgColor: "#3cb4ff",
+                      tooltip: "",
+                      textColor: "#fff",
+                      highlightBg: "#6bd5ff",
+                      url: "#",
+                      people: [{ name: "", imageURL: "" }],
+                      sessionType: "Breakout Session",
+                      numOfSpeakers: "3",
+                    },
+                    {
+                      title: "Sample breakout title",
+                      translation: "Sample breakout title",
+                      from: "14:20:00",
+                      to: "14:50:00",
+                      bgColor: "#3cb4ff",
+                      tooltip: "",
+                      textColor: "#fff",
+                      highlightBg: "#6bd5ff",
+                      url: "#",
+                      people: [{ name: "", imageURL: "" }],
+                      sessionType: "Breakout Session",
+                      numOfSpeakers: "3",
+                    },
+                    {
+                      title: "Sample breakout title",
+                      translation: "Sample breakout title",
+                      from: "17:00:00",
+                      to: "17:30:00",
+                      bgColor: "#3cb4ff",
+                      tooltip: "",
+                      textColor: "#fff",
+                      highlightBg: "#6bd5ff",
+                      url: "#",
+                      people: [{ name: "", imageURL: "" }],
+                      sessionType: "Breakout Session",
+                      numOfSpeakers: "3",
+                    },
+                    {
+                      title: "Sample breakout title",
+                      translation: "Sample breakout title",
+                      from: "17:30:00",
+                      to: "18:00:00",
+                      bgColor: "#3cb4ff",
+                      tooltip: "",
+                      textColor: "#fff",
+                      highlightBg: "#6bd5ff",
+                      url: "#",
+                      people: [{ name: "", imageURL: "" }],
+                      sessionType: "Breakout Session",
+                      numOfSpeakers: "3",
+                    },
+                    {
+                      title: "Sample breakout title",
+                      translation: "Sample breakout title",
+                      from: "17:30:00",
+                      to: "18:00:00",
+                      bgColor: "#3cb4ff",
+                      tooltip: "",
+                      textColor: "#fff",
+                      highlightBg: "#6bd5ff",
                       url: "#",
                       people: [{ name: "", imageURL: "" }],
                       sessionType: "Breakout Session",
