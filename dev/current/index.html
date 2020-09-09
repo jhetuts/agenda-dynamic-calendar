@@ -204,7 +204,8 @@
       }
       .calendar-blocks .agenda,
       .parent-breakouts .breakout,
-      .calendar-blocks .agenda .tooltip {
+      .calendar-blocks .tooltip,
+      .calendar-breakouts .tooltip {
         display: flex;
         position: absolute;
         margin: auto;
@@ -216,7 +217,8 @@
         align-items: center;
         text-decoration: none;
       }
-      .calendar-blocks .agenda .tooltip {
+      .calendar-blocks .tooltip,
+      .calendar-breakouts .tooltip {
         display: none;
         position: absolute;
         background: #262626;
@@ -227,7 +229,9 @@
         font-size: 10px;
         color: #fff;
       }
-      .calendar-blocks .agenda .tooltip:before {
+      .calendar-blocks .tooltip:before,
+      .calendar-breakouts .tooltip:before {
+        position: absolute;
         content: "";
         width: 0;
         height: 0;
@@ -237,17 +241,38 @@
         top: -10px;
         z-index: 3;
         left: 10px;
-        position: absolute;
       }
-      .calendar-blocks .agenda .tooltip span {
+      .calendar-blocks .tooltip span,
+      .calendar-breakouts .tooltip span {
         display: block;
       }
-      .calendar-blocks .agenda:hover > .tooltip {
+      .calendar-blocks .agenda:hover > .tooltip,
+      .calendar-breakouts .breakout:hover > .tooltip {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         justify-content: center;
         overflow: unset;
+      }
+      .calendar-breakouts .breakout-last:hover > .tooltip {
+        bottom: 0;
+        left: 105%;
+      }
+      .calendar-breakouts .breakout-last .tooltip:before {
+        position: absolute;
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 10px 10px 10px 0;
+        border-color: transparent #262626 transparent transparent;
+        left: -10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      .agenda-breakout-label {
+        background-color: rgb(60, 180, 255);
+        min-height: 60px;
       }
       .calendar-blocks .agenda p,
       .parent-breakouts .breakout p {
@@ -331,11 +356,12 @@
           var agendaTarget = document.querySelector(".agenda-ui");
           console.log("running checAgendaTarget");
           if (agendaTarget) {
-            var dragScroll = function dragScroll() {
+            var dragScroll = function dragScroll(initial) {
               var container = document.querySelector(".col-2");
               var isDown = !1;
               var startX = 0;
               var scrollLeft = 0;
+              container.scrollLeft = initial ? initial : 0;
               var mouseDownHandler = function mouseDownHandler(a) {
                 (isDown = !0),
                   (container.style.cursor = "grabbing"),
@@ -409,6 +435,7 @@
                 marker.style.display = "flex";
                 marker.style.left = "unset";
                 marker.style.left = markerPos + "px";
+                dragScroll(markerPos);
                 startCheckingTime(data);
               }
             };
@@ -471,6 +498,8 @@
                 hourDenomination.appendChild(timeMarks);
                 counter += 5;
               }
+
+              dragScroll();
             };
             var fillCalendarBlocks = function fillCalendarBlocks(data) {
               var calendarBlocks = document.querySelector(".calendar-blocks");
@@ -576,6 +605,9 @@
                   var thisBreakoutTitle = document.createElement("p");
                   var thisBreakoutDesc = document.createElement("span");
                   var thisBreakoutImages = document.createElement("div");
+                  var thisBreakoutToolTip = document.createElement("p");
+                  var thisBreakoutToolTipTrans = document.createElement("span");
+
                   var counter = 0;
                   var base = parseInt(data.from);
                   var startFrom = new Date(
@@ -618,6 +650,19 @@
                       thisBreakoutImages.appendChild(bpepsImg);
                     }
                   }
+
+                  thisBreakoutToolTip.className = "tooltip";
+                  thisBreakoutToolTip.textContent = data.breakouts.items[b]
+                    .tooltip
+                    ? data.breakouts.items[b].tooltip
+                    : data.breakouts.items[b].title;
+                  thisBreakoutToolTipTrans.textContent = data.breakouts.items[b]
+                    .tooltip
+                    ? ""
+                    : data.breakouts.items[b].translation;
+                  thisBreakoutToolTipTrans.style.fontStyle = "italic";
+                  thisBreakoutToolTip.appendChild(thisBreakoutToolTipTrans);
+                  thisBreakout.appendChild(thisBreakoutToolTip);
                   thisBreakoutImages.className = "images";
                   thisBreakoutDesc.textContent =
                     data.breakouts.items[b].translation;
@@ -625,6 +670,9 @@
                   thisBreakoutTitle.textContent = data.breakouts.items[b].title;
                   thisBreakoutTitle.appendChild(thisBreakoutDesc);
                   thisBreakout.className = "breakout breakout-" + b;
+                  if (data.breakouts.items.length - b === 1) {
+                    thisBreakout.classList.add("breakout-last");
+                  }
                   thisBreakout.style.width = thisBreakoutWidth + "px";
                   thisBreakout.style.left = left1Pos + "px";
                   thisBreakout.style.backgroundColor =
@@ -651,8 +699,8 @@
               var breakoutDesc = document.createElement("p");
               agendaLabel.innerHTML = "";
               breakoutLabel.innerHTML = "";
-              agendaDesc.textContent = "No data";
-              breakoutDesc.textContent = "No data";
+              agendaDesc.textContent = "No agenda";
+              breakoutDesc.textContent = "No breakout";
               if (data.agenda) {
                 agendaLabel.textContent = data.agenda.name;
                 agendaDesc.textContent = data.agenda.description;
@@ -813,8 +861,678 @@
                 tabs[0].classList.add("active");
               }
               checkTabActive();
-              dragScroll();
             };
+            var timezoneData = [
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Abidjan" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Accra" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Addis_Ababa" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Algiers" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Asmara" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Asmera" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Bamako" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Bangui" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Banjul" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Bissau" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Blantyre" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Brazzaville" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Bujumbura" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Cairo" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Casablanca" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Ceuta" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Conakry" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Dakar" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Dar_es_Salaam" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Djibouti" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Douala" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/El_Aaiun" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Freetown" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Gaborone" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Harare" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Johannesburg" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Juba" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Kampala" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Khartoum" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Kigali" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Kinshasa" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Lagos" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Libreville" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Lome" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Luanda" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Lubumbashi" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Lusaka" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Malabo" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Maputo" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Maseru" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Mbabane" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Mogadishu" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Monrovia" },
+              { offset: "+03:00", label: "(GTM+03:00) Africa/Nairobi" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Ndjamena" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Niamey" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Nouakchott" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Ouagadougou" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Porto-Novo" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Sao_Tome" },
+              { offset: "+00:00", label: "(GTM+00:00) Africa/Timbuktu" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Tripoli" },
+              { offset: "+01:00", label: "(GTM+01:00) Africa/Tunis" },
+              { offset: "+02:00", label: "(GTM+02:00) Africa/Windhoek" },
+              { offset: "-09:00", label: "(GTM-09:00) America/Adak" },
+              { offset: "-08:00", label: "(GTM-08:00) America/Anchorage" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Anguilla" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Antigua" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Araguaina" },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Buenos_Aires",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Catamarca",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/ComodRivadavia",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Cordoba",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Jujuy",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/La_Rioja",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Mendoza",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Rio_Gallegos",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Salta",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/San_Juan",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/San_Luis",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Tucuman",
+              },
+              {
+                offset: "-03:00",
+                label: "(GTM-03:00) America/Argentina/Ushuaia",
+              },
+              { offset: "-04:00", label: "(GTM-04:00) America/Aruba" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Asuncion" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Atikokan" },
+              { offset: "-09:00", label: "(GTM-09:00) America/Atka" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Bahia" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Bahia_Banderas" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Barbados" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Belem" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Belize" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Blanc-Sablon" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Boa_Vista" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Bogota" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Boise" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Buenos_Aires" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Cambridge_Bay" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Campo_Grande" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Cancun" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Caracas" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Catamarca" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Cayenne" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Cayman" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Chicago" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Chihuahua" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Coral_Harbour" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Cordoba" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Costa_Rica" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Creston" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Cuiaba" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Curacao" },
+              { offset: "+00:00", label: "(GTM+00:00) America/Danmarkshavn" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Dawson" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Dawson_Creek" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Denver" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Detroit" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Dominica" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Edmonton" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Eirunepe" },
+              { offset: "-06:00", label: "(GTM-06:00) America/El_Salvador" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Ensenada" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Fort_Nelson" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Fort_Wayne" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Fortaleza" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Glace_Bay" },
+              { offset: "-02:00", label: "(GTM-02:00) America/Godthab" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Goose_Bay" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Grand_Turk" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Grenada" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Guadeloupe" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Guatemala" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Guayaquil" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Guyana" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Halifax" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Havana" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Hermosillo" },
+              {
+                offset: "-04:00",
+                label: "(GTM-04:00) America/Indiana/Indianapolis",
+              },
+              { offset: "-05:00", label: "(GTM-05:00) America/Indiana/Knox" },
+              {
+                offset: "-04:00",
+                label: "(GTM-04:00) America/Indiana/Marengo",
+              },
+              {
+                offset: "-04:00",
+                label: "(GTM-04:00) America/Indiana/Petersburg",
+              },
+              {
+                offset: "-05:00",
+                label: "(GTM-05:00) America/Indiana/Tell_City",
+              },
+              { offset: "-04:00", label: "(GTM-04:00) America/Indiana/Vevay" },
+              {
+                offset: "-04:00",
+                label: "(GTM-04:00) America/Indiana/Vincennes",
+              },
+              {
+                offset: "-04:00",
+                label: "(GTM-04:00) America/Indiana/Winamac",
+              },
+              { offset: "-04:00", label: "(GTM-04:00) America/Indianapolis" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Inuvik" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Iqaluit" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Jamaica" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Jujuy" },
+              { offset: "-08:00", label: "(GTM-08:00) America/Juneau" },
+              {
+                offset: "-04:00",
+                label: "(GTM-04:00) America/Kentucky/Louisville",
+              },
+              {
+                offset: "-04:00",
+                label: "(GTM-04:00) America/Kentucky/Monticello",
+              },
+              { offset: "-05:00", label: "(GTM-05:00) America/Knox_IN" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Kralendijk" },
+              { offset: "-04:00", label: "(GTM-04:00) America/La_Paz" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Lima" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Los_Angeles" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Louisville" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Lower_Princes" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Maceio" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Managua" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Manaus" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Marigot" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Martinique" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Matamoros" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Mazatlan" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Mendoza" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Menominee" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Merida" },
+              { offset: "-08:00", label: "(GTM-08:00) America/Metlakatla" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Mexico_City" },
+              { offset: "-02:00", label: "(GTM-02:00) America/Miquelon" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Moncton" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Monterrey" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Montevideo" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Montreal" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Montserrat" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Nassau" },
+              { offset: "-04:00", label: "(GTM-04:00) America/New_York" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Nipigon" },
+              { offset: "-08:00", label: "(GTM-08:00) America/Nome" },
+              { offset: "-02:00", label: "(GTM-02:00) America/Noronha" },
+              {
+                offset: "-05:00",
+                label: "(GTM-05:00) America/North_Dakota/Beulah",
+              },
+              {
+                offset: "-05:00",
+                label: "(GTM-05:00) America/North_Dakota/Center",
+              },
+              {
+                offset: "-05:00",
+                label: "(GTM-05:00) America/North_Dakota/New_Salem",
+              },
+              { offset: "-02:00", label: "(GTM-02:00) America/Nuuk" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Ojinaga" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Panama" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Pangnirtung" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Paramaribo" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Phoenix" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Port-au-Prince" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Port_of_Spain" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Porto_Acre" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Porto_Velho" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Puerto_Rico" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Punta_Arenas" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Rainy_River" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Rankin_Inlet" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Recife" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Regina" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Resolute" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Rio_Branco" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Rosario" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Santa_Isabel" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Santarem" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Santiago" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Santo_Domingo" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Sao_Paulo" },
+              { offset: "+00:00", label: "(GTM+00:00) America/Scoresbysund" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Shiprock" },
+              { offset: "-08:00", label: "(GTM-08:00) America/Sitka" },
+              { offset: "-04:00", label: "(GTM-04:00) America/St_Barthelemy" },
+              { offset: "-02:30", label: "(GTM-02:30) America/St_Johns" },
+              { offset: "-04:00", label: "(GTM-04:00) America/St_Kitts" },
+              { offset: "-04:00", label: "(GTM-04:00) America/St_Lucia" },
+              { offset: "-04:00", label: "(GTM-04:00) America/St_Thomas" },
+              { offset: "-04:00", label: "(GTM-04:00) America/St_Vincent" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Swift_Current" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Tegucigalpa" },
+              { offset: "-03:00", label: "(GTM-03:00) America/Thule" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Thunder_Bay" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Tijuana" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Toronto" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Tortola" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Vancouver" },
+              { offset: "-04:00", label: "(GTM-04:00) America/Virgin" },
+              { offset: "-07:00", label: "(GTM-07:00) America/Whitehorse" },
+              { offset: "-05:00", label: "(GTM-05:00) America/Winnipeg" },
+              { offset: "-08:00", label: "(GTM-08:00) America/Yakutat" },
+              { offset: "-06:00", label: "(GTM-06:00) America/Yellowknife" },
+              { offset: "+08:00", label: "(GTM+08:00) Antarctica/Casey" },
+              { offset: "+07:00", label: "(GTM+07:00) Antarctica/Davis" },
+              {
+                offset: "+10:00",
+                label: "(GTM+10:00) Antarctica/DumontDUrville",
+              },
+              { offset: "+11:00", label: "(GTM+11:00) Antarctica/Macquarie" },
+              { offset: "+05:00", label: "(GTM+05:00) Antarctica/Mawson" },
+              { offset: "+12:00", label: "(GTM+12:00) Antarctica/McMurdo" },
+              { offset: "-03:00", label: "(GTM-03:00) Antarctica/Palmer" },
+              { offset: "-03:00", label: "(GTM-03:00) Antarctica/Rothera" },
+              { offset: "+12:00", label: "(GTM+12:00) Antarctica/South_Pole" },
+              { offset: "+03:00", label: "(GTM+03:00) Antarctica/Syowa" },
+              { offset: "+02:00", label: "(GTM+02:00) Antarctica/Troll" },
+              { offset: "+06:00", label: "(GTM+06:00) Antarctica/Vostok" },
+              { offset: "+02:00", label: "(GTM+02:00) Arctic/Longyearbyen" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Aden" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Almaty" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Amman" },
+              { offset: "+12:00", label: "(GTM+12:00) Asia/Anadyr" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Aqtau" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Aqtobe" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Ashgabat" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Ashkhabad" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Atyrau" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Baghdad" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Bahrain" },
+              { offset: "+04:00", label: "(GTM+04:00) Asia/Baku" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Bangkok" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Barnaul" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Beirut" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Bishkek" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Brunei" },
+              { offset: "+05:30", label: "(GTM+05:30) Asia/Calcutta" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Chita" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Choibalsan" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Chongqing" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Chungking" },
+              { offset: "+05:30", label: "(GTM+05:30) Asia/Colombo" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Dacca" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Damascus" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Dhaka" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Dili" },
+              { offset: "+04:00", label: "(GTM+04:00) Asia/Dubai" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Dushanbe" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Famagusta" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Gaza" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Harbin" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Hebron" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Ho_Chi_Minh" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Hong_Kong" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Hovd" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Irkutsk" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Istanbul" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Jakarta" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Jayapura" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Jerusalem" },
+              { offset: "+04:30", label: "(GTM+04:30) Asia/Kabul" },
+              { offset: "+12:00", label: "(GTM+12:00) Asia/Kamchatka" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Karachi" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Kashgar" },
+              { offset: "+05:45", label: "(GTM+05:45) Asia/Kathmandu" },
+              { offset: "+05:45", label: "(GTM+05:45) Asia/Katmandu" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Khandyga" },
+              { offset: "+05:30", label: "(GTM+05:30) Asia/Kolkata" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Krasnoyarsk" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Kuala_Lumpur" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Kuching" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Kuwait" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Macao" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Macau" },
+              { offset: "+11:00", label: "(GTM+11:00) Asia/Magadan" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Makassar" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Manila" },
+              { offset: "+04:00", label: "(GTM+04:00) Asia/Muscat" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Nicosia" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Novokuznetsk" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Novosibirsk" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Omsk" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Oral" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Phnom_Penh" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Pontianak" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Pyongyang" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Qatar" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Qostanay" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Qyzylorda" },
+              { offset: "+06:30", label: "(GTM+06:30) Asia/Rangoon" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Riyadh" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Saigon" },
+              { offset: "+11:00", label: "(GTM+11:00) Asia/Sakhalin" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Samarkand" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Seoul" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Shanghai" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Singapore" },
+              { offset: "+11:00", label: "(GTM+11:00) Asia/Srednekolymsk" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Taipei" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Tashkent" },
+              { offset: "+04:00", label: "(GTM+04:00) Asia/Tbilisi" },
+              { offset: "+04:30", label: "(GTM+04:30) Asia/Tehran" },
+              { offset: "+03:00", label: "(GTM+03:00) Asia/Tel_Aviv" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Thimbu" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Thimphu" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Tokyo" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Tomsk" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Ujung_Pandang" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Ulaanbaatar" },
+              { offset: "+08:00", label: "(GTM+08:00) Asia/Ulan_Bator" },
+              { offset: "+06:00", label: "(GTM+06:00) Asia/Urumqi" },
+              { offset: "+10:00", label: "(GTM+10:00) Asia/Ust-Nera" },
+              { offset: "+07:00", label: "(GTM+07:00) Asia/Vientiane" },
+              { offset: "+10:00", label: "(GTM+10:00) Asia/Vladivostok" },
+              { offset: "+09:00", label: "(GTM+09:00) Asia/Yakutsk" },
+              { offset: "+06:30", label: "(GTM+06:30) Asia/Yangon" },
+              { offset: "+05:00", label: "(GTM+05:00) Asia/Yekaterinburg" },
+              { offset: "+04:00", label: "(GTM+04:00) Asia/Yerevan" },
+              { offset: "+00:00", label: "(GTM+00:00) Atlantic/Azores" },
+              { offset: "-03:00", label: "(GTM-03:00) Atlantic/Bermuda" },
+              { offset: "+01:00", label: "(GTM+01:00) Atlantic/Canary" },
+              { offset: "-01:00", label: "(GTM-01:00) Atlantic/Cape_Verde" },
+              { offset: "+01:00", label: "(GTM+01:00) Atlantic/Faeroe" },
+              { offset: "+01:00", label: "(GTM+01:00) Atlantic/Faroe" },
+              { offset: "+02:00", label: "(GTM+02:00) Atlantic/Jan_Mayen" },
+              { offset: "+01:00", label: "(GTM+01:00) Atlantic/Madeira" },
+              { offset: "+00:00", label: "(GTM+00:00) Atlantic/Reykjavik" },
+              { offset: "-02:00", label: "(GTM-02:00) Atlantic/South_Georgia" },
+              { offset: "+00:00", label: "(GTM+00:00) Atlantic/St_Helena" },
+              { offset: "-03:00", label: "(GTM-03:00) Atlantic/Stanley" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/ACT" },
+              { offset: "+09:30", label: "(GTM+09:30) Australia/Adelaide" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Brisbane" },
+              { offset: "+09:30", label: "(GTM+09:30) Australia/Broken_Hill" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Canberra" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Currie" },
+              { offset: "+09:30", label: "(GTM+09:30) Australia/Darwin" },
+              { offset: "+08:45", label: "(GTM+08:45) Australia/Eucla" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Hobart" },
+              { offset: "+10:30", label: "(GTM+10:30) Australia/LHI" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Lindeman" },
+              { offset: "+10:30", label: "(GTM+10:30) Australia/Lord_Howe" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Melbourne" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/NSW" },
+              { offset: "+09:30", label: "(GTM+09:30) Australia/North" },
+              { offset: "+08:00", label: "(GTM+08:00) Australia/Perth" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Queensland" },
+              { offset: "+09:30", label: "(GTM+09:30) Australia/South" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Sydney" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Tasmania" },
+              { offset: "+10:00", label: "(GTM+10:00) Australia/Victoria" },
+              { offset: "+08:00", label: "(GTM+08:00) Australia/West" },
+              { offset: "+09:30", label: "(GTM+09:30) Australia/Yancowinna" },
+              { offset: "-05:00", label: "(GTM-05:00) Brazil/Acre" },
+              { offset: "-02:00", label: "(GTM-02:00) Brazil/DeNoronha" },
+              { offset: "-03:00", label: "(GTM-03:00) Brazil/East" },
+              { offset: "-04:00", label: "(GTM-04:00) Brazil/West" },
+              { offset: "+02:00", label: "(GTM+02:00) CET" },
+              { offset: "-05:00", label: "(GTM-05:00) CST6CDT" },
+              { offset: "-03:00", label: "(GTM-03:00) Canada/Atlantic" },
+              { offset: "-05:00", label: "(GTM-05:00) Canada/Central" },
+              { offset: "-04:00", label: "(GTM-04:00) Canada/Eastern" },
+              { offset: "-06:00", label: "(GTM-06:00) Canada/Mountain" },
+              { offset: "-02:30", label: "(GTM-02:30) Canada/Newfoundland" },
+              { offset: "-07:00", label: "(GTM-07:00) Canada/Pacific" },
+              { offset: "-06:00", label: "(GTM-06:00) Canada/Saskatchewan" },
+              { offset: "-07:00", label: "(GTM-07:00) Canada/Yukon" },
+              { offset: "-04:00", label: "(GTM-04:00) Chile/Continental" },
+              { offset: "-06:00", label: "(GTM-06:00) Chile/EasterIsland" },
+              { offset: "-04:00", label: "(GTM-04:00) Cuba" },
+              { offset: "+03:00", label: "(GTM+03:00) EET" },
+              { offset: "-05:00", label: "(GTM-05:00) EST" },
+              { offset: "-04:00", label: "(GTM-04:00) EST5EDT" },
+              { offset: "+02:00", label: "(GTM+02:00) Egypt" },
+              { offset: "+01:00", label: "(GTM+01:00) Eire" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/GMT" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/GMT+0" },
+              { offset: "-01:00", label: "(GTM-01:00) Etc/GMT+1" },
+              { offset: "-10:00", label: "(GTM-10:00) Etc/GMT+10" },
+              { offset: "-11:00", label: "(GTM-11:00) Etc/GMT+11" },
+              { offset: "-12:00", label: "(GTM-12:00) Etc/GMT+12" },
+              { offset: "-02:00", label: "(GTM-02:00) Etc/GMT+2" },
+              { offset: "-03:00", label: "(GTM-03:00) Etc/GMT+3" },
+              { offset: "-04:00", label: "(GTM-04:00) Etc/GMT+4" },
+              { offset: "-05:00", label: "(GTM-05:00) Etc/GMT+5" },
+              { offset: "-06:00", label: "(GTM-06:00) Etc/GMT+6" },
+              { offset: "-07:00", label: "(GTM-07:00) Etc/GMT+7" },
+              { offset: "-08:00", label: "(GTM-08:00) Etc/GMT+8" },
+              { offset: "-09:00", label: "(GTM-09:00) Etc/GMT+9" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/GMT-0" },
+              { offset: "+01:00", label: "(GTM+01:00) Etc/GMT-1" },
+              { offset: "+10:00", label: "(GTM+10:00) Etc/GMT-10" },
+              { offset: "+11:00", label: "(GTM+11:00) Etc/GMT-11" },
+              { offset: "+12:00", label: "(GTM+12:00) Etc/GMT-12" },
+              { offset: "+13:00", label: "(GTM+13:00) Etc/GMT-13" },
+              { offset: "+14:00", label: "(GTM+14:00) Etc/GMT-14" },
+              { offset: "+02:00", label: "(GTM+02:00) Etc/GMT-2" },
+              { offset: "+03:00", label: "(GTM+03:00) Etc/GMT-3" },
+              { offset: "+04:00", label: "(GTM+04:00) Etc/GMT-4" },
+              { offset: "+05:00", label: "(GTM+05:00) Etc/GMT-5" },
+              { offset: "+06:00", label: "(GTM+06:00) Etc/GMT-6" },
+              { offset: "+07:00", label: "(GTM+07:00) Etc/GMT-7" },
+              { offset: "+08:00", label: "(GTM+08:00) Etc/GMT-8" },
+              { offset: "+09:00", label: "(GTM+09:00) Etc/GMT-9" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/GMT0" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/Greenwich" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/UCT" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/UTC" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/Universal" },
+              { offset: "+00:00", label: "(GTM+00:00) Etc/Zulu" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Amsterdam" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Andorra" },
+              { offset: "+04:00", label: "(GTM+04:00) Europe/Astrakhan" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Athens" },
+              { offset: "+01:00", label: "(GTM+01:00) Europe/Belfast" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Belgrade" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Berlin" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Bratislava" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Brussels" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Bucharest" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Budapest" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Busingen" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Chisinau" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Copenhagen" },
+              { offset: "+01:00", label: "(GTM+01:00) Europe/Dublin" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Gibraltar" },
+              { offset: "+01:00", label: "(GTM+01:00) Europe/Guernsey" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Helsinki" },
+              { offset: "+01:00", label: "(GTM+01:00) Europe/Isle_of_Man" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Istanbul" },
+              { offset: "+01:00", label: "(GTM+01:00) Europe/Jersey" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Kaliningrad" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Kiev" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Kirov" },
+              { offset: "+01:00", label: "(GTM+01:00) Europe/Lisbon" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Ljubljana" },
+              { offset: "+01:00", label: "(GTM+01:00) Europe/London" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Luxembourg" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Madrid" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Malta" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Mariehamn" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Minsk" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Monaco" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Moscow" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Nicosia" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Oslo" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Paris" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Podgorica" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Prague" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Riga" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Rome" },
+              { offset: "+04:00", label: "(GTM+04:00) Europe/Samara" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/San_Marino" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Sarajevo" },
+              { offset: "+04:00", label: "(GTM+04:00) Europe/Saratov" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Simferopol" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Skopje" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Sofia" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Stockholm" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Tallinn" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Tirane" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Tiraspol" },
+              { offset: "+04:00", label: "(GTM+04:00) Europe/Ulyanovsk" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Uzhgorod" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Vaduz" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Vatican" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Vienna" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Vilnius" },
+              { offset: "+04:00", label: "(GTM+04:00) Europe/Volgograd" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Warsaw" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Zagreb" },
+              { offset: "+03:00", label: "(GTM+03:00) Europe/Zaporozhye" },
+              { offset: "+02:00", label: "(GTM+02:00) Europe/Zurich" },
+              { offset: "+01:00", label: "(GTM+01:00) GB" },
+              { offset: "+01:00", label: "(GTM+01:00) GB-Eire" },
+              { offset: "+00:00", label: "(GTM+00:00) GMT" },
+              { offset: "+00:00", label: "(GTM+00:00) GMT+0" },
+              { offset: "+00:00", label: "(GTM+00:00) GMT-0" },
+              { offset: "+00:00", label: "(GTM+00:00) GMT0" },
+              { offset: "+00:00", label: "(GTM+00:00) Greenwich" },
+              { offset: "-10:00", label: "(GTM-10:00) HST" },
+              { offset: "+08:00", label: "(GTM+08:00) Hongkong" },
+              { offset: "+00:00", label: "(GTM+00:00) Iceland" },
+              { offset: "+03:00", label: "(GTM+03:00) Indian/Antananarivo" },
+              { offset: "+06:00", label: "(GTM+06:00) Indian/Chagos" },
+              { offset: "+07:00", label: "(GTM+07:00) Indian/Christmas" },
+              { offset: "+06:30", label: "(GTM+06:30) Indian/Cocos" },
+              { offset: "+03:00", label: "(GTM+03:00) Indian/Comoro" },
+              { offset: "+05:00", label: "(GTM+05:00) Indian/Kerguelen" },
+              { offset: "+04:00", label: "(GTM+04:00) Indian/Mahe" },
+              { offset: "+05:00", label: "(GTM+05:00) Indian/Maldives" },
+              { offset: "+04:00", label: "(GTM+04:00) Indian/Mauritius" },
+              { offset: "+03:00", label: "(GTM+03:00) Indian/Mayotte" },
+              { offset: "+04:00", label: "(GTM+04:00) Indian/Reunion" },
+              { offset: "+04:30", label: "(GTM+04:30) Iran" },
+              { offset: "+03:00", label: "(GTM+03:00) Israel" },
+              { offset: "-05:00", label: "(GTM-05:00) Jamaica" },
+              { offset: "+09:00", label: "(GTM+09:00) Japan" },
+              { offset: "+12:00", label: "(GTM+12:00) Kwajalein" },
+              { offset: "+02:00", label: "(GTM+02:00) Libya" },
+              { offset: "+02:00", label: "(GTM+02:00) MET" },
+              { offset: "-07:00", label: "(GTM-07:00) MST" },
+              { offset: "-06:00", label: "(GTM-06:00) MST7MDT" },
+              { offset: "-07:00", label: "(GTM-07:00) Mexico/BajaNorte" },
+              { offset: "-06:00", label: "(GTM-06:00) Mexico/BajaSur" },
+              { offset: "-05:00", label: "(GTM-05:00) Mexico/General" },
+              { offset: "+12:00", label: "(GTM+12:00) NZ" },
+              { offset: "+12:45", label: "(GTM+12:45) NZ-CHAT" },
+              { offset: "-06:00", label: "(GTM-06:00) Navajo" },
+              { offset: "+08:00", label: "(GTM+08:00) PRC" },
+              { offset: "-07:00", label: "(GTM-07:00) PST8PDT" },
+              { offset: "+13:00", label: "(GTM+13:00) Pacific/Apia" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Auckland" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Bougainville" },
+              { offset: "+12:45", label: "(GTM+12:45) Pacific/Chatham" },
+              { offset: "+10:00", label: "(GTM+10:00) Pacific/Chuuk" },
+              { offset: "-06:00", label: "(GTM-06:00) Pacific/Easter" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Efate" },
+              { offset: "+13:00", label: "(GTM+13:00) Pacific/Enderbury" },
+              { offset: "+13:00", label: "(GTM+13:00) Pacific/Fakaofo" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Fiji" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Funafuti" },
+              { offset: "-06:00", label: "(GTM-06:00) Pacific/Galapagos" },
+              { offset: "-09:00", label: "(GTM-09:00) Pacific/Gambier" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Guadalcanal" },
+              { offset: "+10:00", label: "(GTM+10:00) Pacific/Guam" },
+              { offset: "-10:00", label: "(GTM-10:00) Pacific/Honolulu" },
+              { offset: "-10:00", label: "(GTM-10:00) Pacific/Johnston" },
+              { offset: "+14:00", label: "(GTM+14:00) Pacific/Kiritimati" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Kosrae" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Kwajalein" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Majuro" },
+              { offset: "-09:30", label: "(GTM-09:30) Pacific/Marquesas" },
+              { offset: "-11:00", label: "(GTM-11:00) Pacific/Midway" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Nauru" },
+              { offset: "-11:00", label: "(GTM-11:00) Pacific/Niue" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Norfolk" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Noumea" },
+              { offset: "-11:00", label: "(GTM-11:00) Pacific/Pago_Pago" },
+              { offset: "+09:00", label: "(GTM+09:00) Pacific/Palau" },
+              { offset: "-08:00", label: "(GTM-08:00) Pacific/Pitcairn" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Pohnpei" },
+              { offset: "+11:00", label: "(GTM+11:00) Pacific/Ponape" },
+              { offset: "+10:00", label: "(GTM+10:00) Pacific/Port_Moresby" },
+              { offset: "-10:00", label: "(GTM-10:00) Pacific/Rarotonga" },
+              { offset: "+10:00", label: "(GTM+10:00) Pacific/Saipan" },
+              { offset: "-11:00", label: "(GTM-11:00) Pacific/Samoa" },
+              { offset: "-10:00", label: "(GTM-10:00) Pacific/Tahiti" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Tarawa" },
+              { offset: "+13:00", label: "(GTM+13:00) Pacific/Tongatapu" },
+              { offset: "+10:00", label: "(GTM+10:00) Pacific/Truk" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Wake" },
+              { offset: "+12:00", label: "(GTM+12:00) Pacific/Wallis" },
+              { offset: "+10:00", label: "(GTM+10:00) Pacific/Yap" },
+              { offset: "+02:00", label: "(GTM+02:00) Poland" },
+              { offset: "+01:00", label: "(GTM+01:00) Portugal" },
+              { offset: "+08:00", label: "(GTM+08:00) ROC" },
+              { offset: "+09:00", label: "(GTM+09:00) ROK" },
+              { offset: "+08:00", label: "(GTM+08:00) Singapore" },
+              { offset: "+03:00", label: "(GTM+03:00) Turkey" },
+              { offset: "+00:00", label: "(GTM+00:00) UCT" },
+              { offset: "-08:00", label: "(GTM-08:00) US/Alaska" },
+              { offset: "-09:00", label: "(GTM-09:00) US/Aleutian" },
+              { offset: "-07:00", label: "(GTM-07:00) US/Arizona" },
+              { offset: "-05:00", label: "(GTM-05:00) US/Central" },
+              { offset: "-04:00", label: "(GTM-04:00) US/East-Indiana" },
+              { offset: "-04:00", label: "(GTM-04:00) US/Eastern" },
+              { offset: "-10:00", label: "(GTM-10:00) US/Hawaii" },
+              { offset: "-05:00", label: "(GTM-05:00) US/Indiana-Starke" },
+              { offset: "-04:00", label: "(GTM-04:00) US/Michigan" },
+              { offset: "-06:00", label: "(GTM-06:00) US/Mountain" },
+              { offset: "-07:00", label: "(GTM-07:00) US/Pacific" },
+              { offset: "-07:00", label: "(GTM-07:00) US/Pacific-New" },
+              { offset: "-11:00", label: "(GTM-11:00) US/Samoa" },
+              { offset: "+00:00", label: "(GTM+00:00) UTC" },
+              { offset: "+00:00", label: "(GTM+00:00) Universal" },
+              { offset: "+03:00", label: "(GTM+03:00) W-SU" },
+              { offset: "+01:00", label: "(GTM+01:00) WET" },
+              { offset: "+00:00", label: "(GTM+00:00) Zulu" },
+            ];
             var eventData = [
               {
                 name: "Day 1",
@@ -896,7 +1614,7 @@
                       tooltip: "",
                       bgColor: "#999",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#cacaca",
                       sessionType: "",
                       numOfSpeakers: "",
                     },
@@ -1115,7 +1833,7 @@
                       tooltip: "",
                       bgColor: "#999",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#cacaca",
                       sessionType: "",
                       numOfSpeakers: "",
                     },
@@ -1531,9 +2249,9 @@
                       url: "#",
                       people: [{ name: "", image: "" }],
                       tooltip: "",
-                      bgColor: "#104836",
+                      bgColor: "#999",
                       textColor: "#fff",
-                      highlightBg: "#42d886",
+                      highlightBg: "#cacaca",
                       sessionType: "Panel Discussion",
                       numOfSpeakers: "5",
                     },
@@ -1545,7 +2263,7 @@
                       url: "#",
                       people: [{ name: "", image: "" }],
                       tooltip: "",
-                      bgColor: "#999",
+                      bgColor: "#104836",
                       textColor: "#fff",
                       highlightBg: "#42d886",
                       sessionType: "",
@@ -1615,12 +2333,14 @@
             ];
             var marker = document.querySelector(".marker");
             var txtTimeZone = document.querySelector(".agenda-timezone");
+            var timeZone = document.createElement("p");
             marker.style.display = "none";
-            txtTimeZone.textContent =
+            timeZone.textContent =
               "All time displayed in: " +
               eventData[0].defaultCity +
               " GMT " +
               eventData[0].defaultTimezoneOffset;
+            txtTimeZone.appendChild(timeZone);
             theAgendaUI.style.display = "block";
             agendaTarget.appendChild(theAgendaUI);
             addDayTab();

@@ -102,7 +102,7 @@ var eventData = [
           tooltip: "",
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
-          highlightBg: "#42d886",
+          highlightBg: "#cacaca",
           sessionType: "",
           numOfSpeakers: "",
         },
@@ -379,7 +379,7 @@ var eventData = [
           tooltip: "",
           bgColor: "#999", // background color customizable
           textColor: "#fff", // text color customizable
-          highlightBg: "#42d886",
+          highlightBg: "#cacaca",
           sessionType: "",
           numOfSpeakers: "",
         },
@@ -634,7 +634,7 @@ var eventData = [
           tooltip: "",
           bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
-          highlightBg: "#42d886",
+          highlightBg: "#cacaca",
           sessionType: "Panel Discussion",
           numOfSpeakers: "5",
         },
