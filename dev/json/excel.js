@@ -100,7 +100,7 @@ var eventData = [
             },
           ],
           tooltip: "",
-          bgColor: "#999", // background color customizable
+          bgColor: "#2c2c2c", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#cacaca",
           sessionType: "",
@@ -189,13 +189,12 @@ var eventData = [
     },
     breakouts: {
       name: "Breakouts",
-      description: "Some description here...",
+      description: "",
       backgroundColor: "#3cb4ff",
       items: [
         {
-          title: "-",
-          translation:
-            "Sesión de Trabajo 1: El caso de negocios y la importancia de medir los servicios no financieros  (español)",
+          title: "Tapping into SME Ecosystem",
+          translation: "Aprovechando el ecosistema de las PYMEs",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
@@ -212,9 +211,9 @@ var eventData = [
           numOfSpeakers: "3",
         },
         {
-          title: "Breakout 2: NFS business case & how to measure it (English)",
+          title: "Upskilling through eCommerce platforms",
           translation:
-            "Sesión de Trabajo 2: El caso de negocios y la importancia de medir los servicios no financieros  (inglés)",
+            "Mejorando las habilidades a través de las plataformas de comercio electrónico",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
@@ -231,9 +230,9 @@ var eventData = [
           numOfSpeakers: "3",
         },
         {
-          title: "Breakout 3: Tapping into SME ecoystem",
-          translation:
-            "Sesión de trabajo 3: Aprovechando el ecosistema de las PYMEs",
+          title:
+            "El caso de negocios y la importancia de medir los servicios no financieros  (eñ español)",
+          translation: "",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
@@ -250,9 +249,8 @@ var eventData = [
           numOfSpeakers: "3",
         },
         {
-          title: "Breakout 4: Upskilling through eCommerce platforms",
-          translation:
-            "Sesión de trabajo 4: Mejorando las habilidades a través de las plataformas de comercio electrónico",
+          title: "NFS business case & how to measure it",
+          translation: "",
           from: "11:35:00", // start time (exact)
           to: "12:05:00", // end time (exact)
           bgColor: "#3cb4ff",
@@ -377,7 +375,7 @@ var eventData = [
             },
           ],
           tooltip: "",
-          bgColor: "#999", // background color customizable
+          bgColor: "#2c2c2c", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#cacaca",
           sessionType: "",
@@ -632,7 +630,7 @@ var eventData = [
             },
           ],
           tooltip: "",
-          bgColor: "#104836", // background color customizable
+          bgColor: "#2c2c2c", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#cacaca",
           sessionType: "Panel Discussion",
@@ -651,7 +649,7 @@ var eventData = [
             },
           ],
           tooltip: "",
-          bgColor: "#999", // background color customizable
+          bgColor: "#104836", // background color customizable
           textColor: "#fff", // text color customizable
           highlightBg: "#42d886",
           sessionType: "",

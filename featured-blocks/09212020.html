@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+    #featured-stream {
+      width: 100%;
+    }
+    .stream-wrap h2 {
+      text-align: center;
+    }
+    .stream-block {
+      display: flex;
+    }
+    .stream-block h2 {
+      text-align: center;
+    }
+    .stream-block a {
+      display: flex;
+      justify-content: flex-start;
+      padding: 10px;
+      flex-wrap: wrap;
+      align-content: space-between;
+    }
+    .stream-block a img {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .stream-block a div {
+      width: 100%;
+      height: 200px;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  </style>
+  <body>
+    <section>
+      <div id="featured-stream">
+        <span>wawaw</span>
+      </div>
+    </section>
+    <script>
+      (function () {
+        var checkFeaturedBlocks = setInterval(function () {
+          var featuredStreamWrap = document.querySelector("#featured-stream");
+          if (featuredStreamWrap) {
+            featuredStreamWrap.innerHTML = "";
+
+            var blocksData = [
+              {
+                title: "6 October Breakouts",
+                breakouts: [
+                  {
+                    title: "TAPPING INTO SME ECOSYSTEM",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/7fe2dc3ed6d049c0a24133cbaa2da3d8.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url: "https://www.gevme.com/live/zoom-breakout-test",
+                  },
+                  {
+                    title: "UPSKILLING THROUGH ECOMMERCE PLATFORMS",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/2fea7b1a85994765b74def3d9276aa78.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url:
+                      "https://www.gevme.com/live/breakout-1-data-bias-and-course-corrections",
+                  },
+                  {
+                    title:
+                      "EL CASO DE NEGOCIOS Y LA IMPORTANCIA DE MEDIR LOS SERVICIOS NO FINANCIEROS (EÑ ESPAÑOL)",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/52f57264dad34ff6bdfb0992b0427830.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url:
+                      "https://www.gevme.com/live/breakout-3-el-caso-de-negocios-y-la-importancia-de-medir-los-servicios-no-financieros-(en-espanol)",
+                  },
+                  {
+                    title: "NFS BUSINESS CASE & HOW TO MEASURE IT",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/73afaf78a1044c8592b4685827172c7e.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url:
+                      "https://www.gevme.com/live/breakout-4-nfs-business-case-and-how-to-measure-it",
+                  },
+                ],
+              },
+              {
+                title: "7 October Breakouts",
+                breakouts: [
+                  {
+                    title: "DATA BIAS & COURSE CORRECTIONS",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/ffda0df315a04a0499258c3eb2aca795.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url:
+                      "https://www.gevme.com/live/breakout-1-data-bias-and-course-corrections",
+                  },
+                  {
+                    title:
+                      "INCENTIVES & ECOSYSTEM SUPPORT - DEFINING STAKEHOLDER ROLES",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/087076a736ff4174b8fec927635ed884.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url:
+                      "https://www.gevme.com/live/breakout-2-incentives-and-ecosystem-support-defining-stakeholder-roles",
+                  },
+                  {
+                    title: "BUSINESS CASE FOR GENDER INTELLIGENT FINTEC",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/dabd19f865084f089bdff4bc1d9db753.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url:
+                      "https://www.gevme.com/live/breakout-3-business-case-for-gender-intelligent-fintech-(with-spanish-translation)",
+                  },
+                  {
+                    title: "INVESTING IN WOMEN-FOCUSED FINTECHS",
+                    image:
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/401a6e9940734febb482eb3978f03477.jpg",
+                    descriptions:
+                      "Description of the breakout session goes here.",
+                    url:
+                      "https://www.gevme.com/live/breakout-4-investing-in-women-focused-fintechs",
+                  },
+                ],
+              },
+            ];
+
+            for (var i = 0; i < blocksData.length; i++) {
+              var parentEl = document.createElement("div");
+              var parentTitle = document.createElement("h2");
+              var parentBlock = document.createElement("div");
+
+              for (var b = 0; b < blocksData[i].breakouts.length; b++) {
+                var blocks = document.createElement("a");
+                var blockImg = document.createElement("img");
+                var blockDesc = document.createElement("p");
+
+                blocks.href = blocksData[i].breakouts[b].url;
+                // blockImg.style.backgroundImage =
+                //   "url(" + blocksData[i].breakouts[b].image + ")";
+                blockImg.src = blocksData[i].breakouts[b].image;
+                blockDesc.textContent = blocksData[i].breakouts[b].descriptions;
+
+                blocks.appendChild(blockImg);
+                blocks.appendChild(blockDesc);
+
+                parentBlock.appendChild(blocks);
+              }
+
+              parentTitle.textContent = blocksData[i].title;
+              parentBlock.className = "stream-block";
+              parentEl.className = "stream-wrap";
+              parentEl.appendChild(parentTitle);
+              parentEl.appendChild(parentBlock);
+              featuredStreamWrap.appendChild(parentEl);
+            }
+            clearInterval(checkFeaturedBlocks);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>
