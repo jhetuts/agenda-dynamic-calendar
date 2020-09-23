@@ -100,26 +100,34 @@
           width: 100%;
           flex-direction: column;
         }
+        .agenda-timezone .currentTz {
+          display: flex;
+          margin-bottom: 10px;
+          flex-wrap: wrap;
+        }
+        .currentTz .current-timezone {
+          margin-left: 5px;
+        }
       }
       .agenda-body,
-      .col-1,
-      .col-2 {
+      .agenda-col-1,
+      .agenda-col-2 {
         display: flex;
         background: #f5f5f5;
       }
 
-      .agenda-body .col-1 {
+      .agenda-body .agenda-col-1 {
         display: flex;
         flex-direction: column;
         width: 175px;
       }
 
       @media screen and (max-width: 767px) {
-        .agenda-body .col-1 {
+        .agenda-body .agenda-col-1 {
           width: 120px;
         }
       }
-      .agenda-body .col-1 div {
+      .agenda-body .agenda-col-1 div {
         display: flex;
         width: 100%;
         align-items: flex-start;
@@ -132,16 +140,16 @@
         font-weight: 700;
         border-bottom: 1px solid #eaeaea;
       }
-      .agenda-body .col-1 div:last-child {
+      .agenda-body .agenda-col-1 div:last-child {
         border-bottom: none;
       }
-      .agenda-body .col-1 .desc {
+      .agenda-body .agenda-col-1 .desc {
         font-size: 10px;
       }
-      .agenda-body .col-1 .space {
+      .agenda-body .agenda-col-1 .space {
         height: 60px;
       }
-      .agenda-body .col-2 {
+      .agenda-body .agenda-col-2 {
         position: relative;
         width: calc(100% - 175px);
         overflow-x: auto;
@@ -150,14 +158,14 @@
         scrollbar-width: none;
       }
       @media screen and (max-width: 767px) {
-        .agenda-body .col-2 {
+        .agenda-body .agenda-col-2 {
           width: calc(100% - 120px);
         }
       }
-      .agenda-body .col-2::-webkit-scrollbar {
+      .agenda-body .agenda-col-2::-webkit-scrollbar {
         display: none;
       }
-      .col-2 .marker {
+      .agenda-col-2 .marker {
         position: absolute;
         height: 100%;
         bottom: 0;
@@ -170,36 +178,36 @@
         text-align: center;
         z-index: 1;
       }
-      .col-2 .marker i {
+      .agenda-col-2 .marker i {
         font-style: normal;
         font-size: 12px;
         background: #f02849;
         color: #fff;
         line-height: 1;
       }
-      .col-2 .marker i:first-child {
+      .agenda-col-2 .marker i:first-child {
         width: 100%;
         padding: 3px;
         border-radius: 3px;
       }
-      .col-2 .marker i.line {
+      .agenda-col-2 .marker i.line {
         width: 0.2px;
         height: calc(100% - 18px);
       }
-      .col-2 .mid-col-1 {
+      .agenda-col-2 .mid-agenda-col-1 {
         position: relative;
       }
-      .col-2 .mid-col-2 {
+      .agenda-col-2 .mid-agenda-col-2 {
         display: flex;
         padding: 20px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
       }
-      .col-2 .mid-col-2 img {
+      .agenda-col-2 .mid-agenda-col-2 img {
         width: 40px;
       }
-      .col-2 .mid-col-2 p {
+      .agenda-col-2 .mid-agenda-col-2 p {
         font-size: 14px;
         white-space: nowrap;
       }
@@ -348,9 +356,9 @@
         </div>
       </div>
       <div class="agenda-body">
-        <div class="col-1" id="right-col"></div>
-        <div class="col-2">
-          <div class="mid-col-1">
+        <div class="agenda-col-1" id="right-col"></div>
+        <div class="agenda-col-2">
+          <div class="mid-agenda-col-1">
             <span class="marker"><i>Now</i><i class="line"></i></span>
             <div class="agenda-hours">
               <div class="hour-denomination"></div>
@@ -362,7 +370,7 @@
               <div class="calendar-breakouts"></div>
             </div>
           </div>
-          <div class="mid-col-2">
+          <div class="mid-agenda-col-2">
             <img
               src="https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/2fee5016220f40ac89d4c3c6c4f524c2.png"
               alt="See you"
@@ -383,7 +391,7 @@
           var agendaTarget = document.querySelector(".agenda-ui");
           if (agendaTarget) {
             var dragScroll = function dragScroll(initial) {
-              var container = document.querySelector(".col-2");
+              var container = document.querySelector(".agenda-col-2");
               var isDown = !1;
               var startX = 0;
               var scrollLeft = 0;
@@ -1022,6 +1030,11 @@
               func
             ) {
               var tabs = document.querySelectorAll(".tab");
+              if (window.localStorage) {
+                localStorage.removeItem("agenda-base");
+                localStorage.removeItem("agenda-defaultTz");
+                localStorage.removeItem("agenda-defaultLoc");
+              }
               tabs.forEach(function (tab) {
                 if (tab.classList.contains("active")) {
                   generateBaseFromTz(eventData[tab.dataset.id], selected);
@@ -1034,19 +1047,24 @@
 
               tZSelection.removeEventListener("change", func);
             };
-
             var generateBaseFromTz = function generateBaseFromTz(
               data,
               selected
             ) {
-              var city =
-                window.localStorage.getItem("agenda-defaultLoc") ||
-                selected.dataset.city ||
-                data.defaultCity;
-              var offset =
-                window.localStorage.getItem("agenda-defaultTz") ||
-                selected.value ||
-                data.defaultTimezoneOffset;
+              var city = data.defaultCity;
+              var offset = data.defaultTimezoneOffset;
+
+              if (
+                window.localStorage.getItem("agenda-defaultLoc") &&
+                window.localStorage.getItem("agenda-defaultTz")
+              ) {
+                city = window.localStorage.getItem("agenda-defaultLoc");
+                offset = window.localStorage.getItem("agenda-defaultTz");
+              }
+              if (selected) {
+                city = selected.dataset.city;
+                offset = selected.value;
+              }
 
               var dateToConvert = new Date(
                 data.date +
@@ -1067,6 +1085,7 @@
                 newDateFromLocal.getMinutes() +
                 ":" +
                 newDateFromLocal.getSeconds();
+
               if (window.localStorage) {
                 localStorage.setItem("agenda-base", newTimeBase);
                 localStorage.setItem("agenda-defaultTz", offset);
