@@ -92,6 +92,11 @@
         text-decoration: none;
       }
       @media screen and (max-width: 767px) {
+        .agenda-timezone #select-tz {
+          padding: 5px;
+          max-width: 100%;
+          margin-left: 0;
+        }
         .agenda-timezone {
           text-align: center;
           padding: 10px 0;
@@ -104,6 +109,10 @@
           display: flex;
           margin-bottom: 10px;
           flex-wrap: wrap;
+          text-align: center;
+          align-items: center;
+          justify-content: center;
+          padding: 0 10px;
         }
         .currentTz .current-timezone {
           margin-left: 5px;
@@ -383,12 +392,14 @@
     </div>
     <script>
       "use strict";
+
       (function () {
         var theAgendaUI = document.querySelector(".agenda-wrapper");
         theAgendaUI.style.display = "none";
         var checkingTime = [];
         var checkAgendaTarget = setInterval(function () {
           var agendaTarget = document.querySelector(".agenda-ui");
+
           if (agendaTarget) {
             var dragScroll = function dragScroll(initial) {
               var container = document.querySelector(".agenda-col-2");
@@ -396,6 +407,7 @@
               var startX = 0;
               var scrollLeft = 0;
               container.scrollLeft = initial ? initial : 0;
+
               var mouseDownHandler = function mouseDownHandler(a) {
                 (isDown = !0),
                   (container.style.cursor = "grabbing"),
@@ -405,38 +417,46 @@
                   container.addEventListener("mouseleave", mouseUpHandler),
                   container.addEventListener("mousemove", mouseMoveHandler);
               };
+
               var mouseUpHandler = function mouseUpHandler(a) {
                 (container.style.cursor = "grab"), (isDown = !1);
               };
+
               var mouseMoveHandler = function mouseMoveHandler(a) {
                 a.preventDefault();
+
                 if (isDown) {
                   var i = 2 * (a.pageX - container.offsetLeft - startX);
                   container.scrollLeft = scrollLeft - i;
                 }
               };
+
               container.addEventListener("mousedown", mouseDownHandler);
             };
+
             var isDateEqual = function isDateEqual(data) {
               var y = calculateBetweenLocalAndDefaultTz(
                 data.defaultCity,
                 data.defaultTimezoneOffset
               );
-
               var today = new Date(y);
               var dd = String(today.getDate()).padStart(2, "0");
               var mm = String(today.getMonth() + 1).padStart(2, "0");
               var yyyy = today.getFullYear();
               var currentDay = new Date(mm + "/" + dd + "/" + yyyy);
               var testDate = new Date(data.date);
+
               for (var itrvl = 0; itrvl < checkingTime.length; itrvl++) {
                 clearInterval(checkingTime[itrvl]);
               }
+
               if (testDate.getTime() === currentDay.getTime()) {
                 checkRangeInSession(data);
               }
+
               return testDate.getTime() === currentDay.getTime();
             };
+
             var checkRangeInSession = function checkRangeInSession(data) {
               var dt = calculateBetweenLocalAndDefaultTz(
                 data.defaultCity,
@@ -462,6 +482,7 @@
                 parseInt(e[1]),
                 parseInt(e[2])
               );
+
               if (dt >= dt1 && dt <= dt2) {
                 var from = new Date(data.date + " " + data.from);
                 var to = new Date(dt);
@@ -474,6 +495,7 @@
                 startCheckingTime(data);
               }
             };
+
             var calculateBetweenLocalAndDefaultTz = function calculateBetweenLocalAndDefaultTz(
               city,
               offset
@@ -483,13 +505,14 @@
               var nd = new Date(utc + 36e5 * offset);
               return nd;
             };
+
             var convertTimeZone = function convertTimeZone(city, offset, date) {
-              console.log("convertTimeZone", city, offset, date);
               var d = new Date(date);
               var utc = d.getTime() + d.getTimezoneOffset() * 6e4;
               var nd = new Date(utc + 36e5 * offset);
               return nd;
             };
+
             var checkActive = function checkActive(tabs) {
               var withActive = false;
               tabs.forEach(function (tab) {
@@ -499,6 +522,7 @@
               });
               return withActive;
             };
+
             var checkSecondsDiff = function checkSecondsDiff(a, b) {
               if (a.getTime() < b.getTime()) {
                 var diff = (a.getTime() - b.getTime()) / 1e3;
@@ -506,6 +530,7 @@
                 return Math.abs(diff * 60 * 60);
               }
             };
+
             var checkTabActive = function checkTabActive() {
               var tabs = document.querySelectorAll(".tab");
               tabs.forEach(function (tab) {
@@ -519,6 +544,7 @@
                 }
               });
             };
+
             var fillTimeTable = function fillTimeTable(data) {
               var selectedBase = window.localStorage.getItem("agenda-base")
                 ? window.localStorage.getItem("agenda-base")
@@ -527,10 +553,8 @@
                 ".hour-denomination"
               );
               hourDenomination.innerHTML = "";
-
               var from = new Date(data.date + " " + data.from);
               var to = new Date(data.date + " " + data.to);
-
               var secondsDiff = checkSecondsDiff(from, to);
               var minuteBase = data.from.split(":");
               var counter = parseInt(minuteBase[1]);
@@ -538,6 +562,7 @@
 
               for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
                 var timeMarks = document.createElement("div");
+
                 if (counter > 55) {
                   base++;
                   counter = 0;
@@ -556,14 +581,15 @@
 
               dragScroll();
             };
+
             var fillCalendarBlocks = function fillCalendarBlocks(data) {
               var agendaCalendar = document.querySelector(".agenda-calendar");
               agendaCalendar.innerHTML = "";
+
               if (data.agenda.length) {
                 for (var blck = 0; blck < data.agenda.length; blck++) {
                   var calendarBlocks = document.createElement("div");
                   calendarBlocks.className = "calendar-blocks";
-
                   var from = new Date(data.date + " " + data.from);
                   var to = new Date(data.date + " " + data.to);
                   var secondsDiff = checkSecondsDiff(from, to);
@@ -575,6 +601,7 @@
                       base++;
                       counter = 0;
                     }
+
                     var block = document.createElement("div");
                     block.classList.add("block");
                     calendarBlocks.appendChild(block);
@@ -610,21 +637,11 @@
                         60 +
                       31;
 
-                    // checking if date is passed
                     var currentYTD = calculateBetweenLocalAndDefaultTz(
                       data.defaultCity,
                       data.defaultTimezoneOffset
                     );
 
-                    var getLocalTimezoneDate =
-                      currentYTD.getMonth() +
-                      1 +
-                      "/" +
-                      currentYTD.getDate() +
-                      "/" +
-                      currentYTD.getFullYear();
-
-                    // end of checking if date is passed
                     if (data.agenda[blck].items[ses].people.length) {
                       for (
                         var peps = 0;
@@ -639,9 +656,11 @@
                             data.agenda[blck].items[ses].people[peps].name;
                           thisAgendaImages.appendChild(pepsImg);
                         }
+
                         continue;
                       }
                     }
+
                     thisAgendaTitle.textContent =
                       data.agenda[blck].items[ses].title;
                     thisAgendaTitle.style.color =
@@ -672,27 +691,36 @@
                     thisAgenda.style.width = thisAgendaWidth + "px";
                     thisAgenda.style.backgroundColor =
                       data.agenda[blck].items[ses].bgColor;
-                    if (new Date(data.date) < new Date(getLocalTimezoneDate)) {
+
+                    if (
+                      new Date(data.date).getTime() <
+                      new Date(currentYTD).getTime()
+                    ) {
                       thisAgenda.style.backgroundColor =
                         data.agenda[blck].items[ses].passedBg;
                     }
+
                     thisAgenda.style.left = left1Pos + "px";
                     thisAgenda.href = data.agenda[blck].items[ses].url;
                     calendarBlocks.append(thisAgenda);
                   }
+
                   agendaCalendar.appendChild(calendarBlocks);
                 }
               }
             };
+
             var fillBreakOutBlocks = function fillBreakOutBlocks(data) {
               var calendarBreakouts = document.querySelector(
                 ".calendar-breakouts"
               );
               calendarBreakouts.innerHTML = "";
+
               if (data.breakouts) {
                 var from = new Date(data.date + " " + data.from);
                 var to = new Date(data.date + " " + data.to);
                 var secondsDiff = checkSecondsDiff(from, to);
+
                 for (var b = 0; b < data.breakouts.items.length; b++) {
                   var thisBreakoutParent = document.createElement("div");
                   var thisBreakout = document.createElement("a");
@@ -701,21 +729,11 @@
                   var thisBreakoutImages = document.createElement("div");
                   var thisBreakoutToolTip = document.createElement("p");
                   var thisBreakoutToolTipTrans = document.createElement("span");
-                  // checking if date is passed
+
                   var currentYTD = calculateBetweenLocalAndDefaultTz(
                     data.defaultCity,
                     data.defaultTimezoneOffset
                   );
-
-                  var getLocalTimezoneDate =
-                    currentYTD.getMonth() +
-                    1 +
-                    "/" +
-                    currentYTD.getDate() +
-                    "/" +
-                    currentYTD.getFullYear();
-
-                  // end of checking if date is passed
 
                   var counter = 0;
                   var base = parseInt(data.from);
@@ -736,16 +754,19 @@
                       5) *
                       60 +
                     31;
+
                   for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
                     if (counter > 55) {
                       base++;
                       counter = 0;
                     }
+
                     var block = document.createElement("div");
                     block.classList.add("block");
                     thisBreakoutParent.appendChild(block);
                     counter += 5;
                   }
+
                   for (
                     var bpeps = 0;
                     bpeps < data.breakouts.items[b].people.length;
@@ -779,17 +800,24 @@
                   thisBreakoutTitle.textContent = data.breakouts.items[b].title;
                   thisBreakoutTitle.appendChild(thisBreakoutDesc);
                   thisBreakout.className = "breakout breakout-" + b;
+
                   if (data.breakouts.items.length - b === 1) {
                     thisBreakout.classList.add("breakout-last");
                   }
+
                   thisBreakout.style.width = thisBreakoutWidth + "px";
                   thisBreakout.style.left = left1Pos + "px";
                   thisBreakout.style.backgroundColor =
                     data.breakouts.items[b].bgColor;
-                  if (new Date(data.date) < new Date(getLocalTimezoneDate)) {
+
+                  if (
+                    new Date(data.date).getTime() <
+                    new Date(currentYTD).getTime()
+                  ) {
                     thisBreakout.style.backgroundColor =
                       data.breakouts.items[b].passedBg;
                   }
+
                   thisBreakout.href = data.breakouts.items[b].url;
                   thisBreakout.style.color = data.breakouts.items[b].textColor;
                   thisBreakout.appendChild(thisBreakoutImages);
@@ -801,6 +829,7 @@
                 }
               }
             };
+
             var fillLabels = function fillLabels(data) {
               var rightCol = document.querySelector("#right-col");
               rightCol.innerHTML = "";
@@ -809,7 +838,6 @@
               var breakoutLabel = document.createElement("div");
               var breakoutDesc = document.createElement("p");
               breakoutLabel.style.height = "60px";
-
               space.style.height = "60px";
               rightCol.appendChild(space);
 
@@ -817,10 +845,8 @@
                 for (var tracks = 0; tracks < data.agenda.length; tracks++) {
                   var agendaLabel = document.createElement("div");
                   var agendaDesc = document.createElement("p");
-
                   agendaLabel.className = "agenda-calendar-label";
                   agendaDesc.textContent = "No agenda";
-
                   agendaLabel.textContent = data.agenda[tracks].name;
                   agendaDesc.textContent = data.agenda[tracks].description;
                   agendaDesc.className = "desc";
@@ -832,6 +858,7 @@
                   rightCol.appendChild(agendaLabel);
                 }
               }
+
               if (data.breakouts) {
                 breakoutLabel.textContent = data.breakouts.name;
                 breakoutDesc.textContent = data.breakouts.description;
@@ -843,8 +870,10 @@
                   data.breakouts.backgroundColor;
                 breakoutLabel.appendChild(breakoutDesc);
               }
+
               rightCol.appendChild(breakoutLabel);
             };
+
             var switchTab = function switchTab() {
               var tabs = document.querySelectorAll(".tab");
               marker.style.display = "none";
@@ -856,6 +885,7 @@
               this.classList.add("active");
               checkTabActive();
             };
+
             var activeSessions = function activeSessions(data) {
               if (data.agenda.length) {
                 for (var agnd = 0; agnd < data.agenda.length; agnd++) {
@@ -894,10 +924,12 @@
                       parseInt(e[1]),
                       parseInt(e[2])
                     );
+
                     if (convertedt >= dt1 && convertedt <= dt2) {
                       currentSess.style.backgroundColor =
                         data.agenda[agnd].items[actSes].highlightBg;
                     }
+
                     if (dt2 < convertedt) {
                       currentSess.style.backgroundColor =
                         data.agenda[agnd].items[actSes].passedBg;
@@ -919,7 +951,6 @@
                   );
                   currentBreakout.style.backgroundColor =
                     data.breakouts.items[actBrk].bgColor;
-
                   var s = startTime.split(":");
                   var dt1 = new Date(
                     convertedt.getFullYear(),
@@ -938,6 +969,7 @@
                     parseInt(e[1]),
                     parseInt(e[2])
                   );
+
                   if (convertedt >= dt1 && convertedt <= dt2) {
                     currentBreakout.style.backgroundColor =
                       data.breakouts.items[actBrk].highlightBg;
@@ -950,6 +982,7 @@
                 }
               }
             };
+
             var startCheckingTime = function startCheckingTime(data) {
               var from = new Date(data.date + " " + data.from);
               var to = new Date(data.date + " " + data.to);
@@ -962,31 +995,31 @@
                   .getPropertyValue("left");
                 var convertedOldValue = parseFloat(oldValue.replace("px", ""));
                 var newValue = convertedOldValue + secondMove;
+
                 if (newValue > ceiling) {
                   marker.style.display = "none";
+
                   for (var itrvl = 0; itrvl < checkingTime.length; itrvl++) {
                     clearInterval(checkingTime[itrvl]);
                   }
                 }
+
                 marker.style.left = newValue + "px";
                 activeSessions(data);
               }, 1e3);
               checkingTime.push(runMarkerRun);
             };
+
             var addDayTab = function addDayTab() {
               var agendaDays = document.querySelector(".agenda-days");
               eventData.map(function (day, index) {
                 var tab = document.createElement("li");
                 tab.className = index + " tab";
                 tab.dataset.id = index;
-                // checking if date is passed
-
-                console.log(day);
                 var currentYTD = calculateBetweenLocalAndDefaultTz(
                   day.defaultCity,
                   day.defaultTimezoneOffset
                 );
-
                 var getLocalTimezoneDate =
                   currentYTD.getMonth() +
                   1 +
@@ -994,14 +1027,14 @@
                   currentYTD.getDate() +
                   "/" +
                   currentYTD.getFullYear();
-                console.log(new Date(getLocalTimezoneDate), new Date(day.date));
-                // end of checking if date is passed
+
                 if (
                   new Date(getLocalTimezoneDate).getTime() ===
                   new Date(day.date).getTime()
                 ) {
                   tab.classList.add("active");
                 }
+
                 var p = document.createElement("p");
                 p.textContent =
                   day.name +
@@ -1016,11 +1049,14 @@
                 agendaDays.append(tab);
               });
               var tabs = document.querySelectorAll(".tab");
+
               if (!checkActive(tabs)) {
                 tabs[0].classList.add("active");
               }
+
               checkTabActive();
             };
+
             var handleTZSelection = function handleTZSelection(
               tZSelection,
               thisBtn,
@@ -1030,11 +1066,13 @@
               func
             ) {
               var tabs = document.querySelectorAll(".tab");
+
               if (window.localStorage) {
                 localStorage.removeItem("agenda-base");
                 localStorage.removeItem("agenda-defaultTz");
                 localStorage.removeItem("agenda-defaultLoc");
               }
+
               tabs.forEach(function (tab) {
                 if (tab.classList.contains("active")) {
                   generateBaseFromTz(eventData[tab.dataset.id], selected);
@@ -1044,9 +1082,9 @@
               thisBtn.style.display = "block";
               selection.style.display = "none";
               currentTz.style.display = "inline";
-
               tZSelection.removeEventListener("change", func);
             };
+
             var generateBaseFromTz = function generateBaseFromTz(
               data,
               selected
@@ -1061,6 +1099,7 @@
                 city = window.localStorage.getItem("agenda-defaultLoc");
                 offset = window.localStorage.getItem("agenda-defaultTz");
               }
+
               if (selected) {
                 city = selected.dataset.city;
                 offset = selected.value;
@@ -1078,7 +1117,6 @@
                 offset,
                 dateToConvert
               );
-
               var newTimeBase =
                 newDateFromLocal.getHours() +
                 ":" +
@@ -1094,16 +1132,16 @@
 
               fillTimeTable(data);
             };
-            var changeTimeZone = function changeTimeZone() {
+
+            var changeTimeZone = function changeTimeZone(e) {
+              e.preventDefault();
               var thisBtn = this;
               var currentTzWrap = document.querySelector(".currentTz");
               var currentTz = currentTzWrap.querySelector(".current-timezone");
               var tZSelection = document.querySelector("#select-tz");
               var defaultTz = window.localStorage.getItem("agenda-defaultTz");
               var defaultLoc = window.localStorage.getItem("agenda-defaultLoc");
-
               console.log("defaultTz", defaultTz);
-
               thisBtn.style.display = "none";
 
               for (var tz = 0; tz < timezoneData.length; tz++) {
@@ -1138,21 +1176,58 @@
                 );
               });
             };
+
             var timezoneData = [
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Abidjan" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Accra" },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Abidjan",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Accra",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
                 city: "Africa/Addis_Ababa",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Algiers" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Africa/Asmara" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Africa/Asmera" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Bamako" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Bangui" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Banjul" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Bissau" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Algiers",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Africa/Asmara",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Africa/Asmera",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Bamako",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Bangui",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Banjul",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Bissau",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
@@ -1168,15 +1243,31 @@
                 gtm: "GTM+02:00",
                 city: "Africa/Bujumbura",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Cairo" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Cairo",
+              },
               {
                 offset: "+01",
                 gtm: "GTM+01:00",
                 city: "Africa/Casablanca",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Ceuta" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Conakry" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Dakar" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Ceuta",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Conakry",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Dakar",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
@@ -1187,7 +1278,11 @@
                 gtm: "GTM+03:00",
                 city: "Africa/Djibouti",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Douala" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Douala",
+              },
               {
                 offset: "+01",
                 gtm: "GTM+01:00",
@@ -1203,43 +1298,91 @@
                 gtm: "GTM+02:00",
                 city: "Africa/Gaborone",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Harare" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Harare",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Africa/Johannesburg",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Africa/Juba" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Africa/Kampala" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Africa/Juba",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Africa/Kampala",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Africa/Khartoum",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Kigali" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Kigali",
+              },
               {
                 offset: "+01",
                 gtm: "GTM+01:00",
                 city: "Africa/Kinshasa",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Lagos" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Lagos",
+              },
               {
                 offset: "+01",
                 gtm: "GTM+01:00",
                 city: "Africa/Libreville",
               },
-              { offset: "+00", gtm: "GTM+00:00", city: "Africa/Lome" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Luanda" },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Africa/Lome",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Luanda",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Africa/Lubumbashi",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Lusaka" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Malabo" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Maputo" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Maseru" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Mbabane" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Lusaka",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Malabo",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Maputo",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Maseru",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Mbabane",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
@@ -1250,13 +1393,21 @@
                 gtm: "GTM+00:00",
                 city: "Africa/Monrovia",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Africa/Nairobi" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Africa/Nairobi",
+              },
               {
                 offset: "+01",
                 gtm: "GTM+01:00",
                 city: "Africa/Ndjamena",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Niamey" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Niamey",
+              },
               {
                 offset: "+00",
                 gtm: "GTM+00:00",
@@ -1282,14 +1433,26 @@
                 gtm: "GTM+00:00",
                 city: "Africa/Timbuktu",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Africa/Tripoli" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Africa/Tunis" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Africa/Tripoli",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Africa/Tunis",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Africa/Windhoek",
               },
-              { offset: "-09", gtm: "GTM-09:00", city: "America/Adak" },
+              {
+                offset: "-09",
+                gtm: "GTM-09:00",
+                city: "America/Adak",
+              },
               {
                 offset: "-08",
                 gtm: "GTM-08:00",
@@ -1375,7 +1538,11 @@
                 gtm: "GTM-03:00",
                 city: "America/Argentina/Ushuaia",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/Aruba" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/Aruba",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1386,8 +1553,16 @@
                 gtm: "GTM-05:00",
                 city: "America/Atikokan",
               },
-              { offset: "-09", gtm: "GTM-09:00", city: "America/Atka" },
-              { offset: "-03", gtm: "GTM-03:00", city: "America/Bahia" },
+              {
+                offset: "-09",
+                gtm: "GTM-09:00",
+                city: "America/Atka",
+              },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "America/Bahia",
+              },
               {
                 offset: "-05",
                 gtm: "GTM-05:00",
@@ -1398,8 +1573,16 @@
                 gtm: "GTM-04:00",
                 city: "America/Barbados",
               },
-              { offset: "-03", gtm: "GTM-03:00", city: "America/Belem" },
-              { offset: "-06", gtm: "GTM-06:00", city: "America/Belize" },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "America/Belem",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "America/Belize",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1410,8 +1593,16 @@
                 gtm: "GTM-04:00",
                 city: "America/Boa_Vista",
               },
-              { offset: "-05", gtm: "GTM-05:00", city: "America/Bogota" },
-              { offset: "-06", gtm: "GTM-06:00", city: "America/Boise" },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "America/Bogota",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "America/Boise",
+              },
               {
                 offset: "-03",
                 gtm: "GTM-03:00",
@@ -1427,7 +1618,11 @@
                 gtm: "GTM-04:00",
                 city: "America/Campo_Grande",
               },
-              { offset: "-05", gtm: "GTM-05:00", city: "America/Cancun" },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "America/Cancun",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1443,7 +1638,11 @@
                 gtm: "GTM-03:00",
                 city: "America/Cayenne",
               },
-              { offset: "-05", gtm: "GTM-05:00", city: "America/Cayman" },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "America/Cayman",
+              },
               {
                 offset: "-05",
                 gtm: "GTM-05:00",
@@ -1474,7 +1673,11 @@
                 gtm: "GTM-07:00",
                 city: "America/Creston",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/Cuiaba" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/Cuiaba",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1485,13 +1688,21 @@
                 gtm: "GTM+00:00",
                 city: "America/Danmarkshavn",
               },
-              { offset: "-07", gtm: "GTM-07:00", city: "America/Dawson" },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "America/Dawson",
+              },
               {
                 offset: "-07",
                 gtm: "GTM-07:00",
                 city: "America/Dawson_Creek",
               },
-              { offset: "-06", gtm: "GTM-06:00", city: "America/Denver" },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "America/Denver",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1577,13 +1788,21 @@
                 gtm: "GTM-05:00",
                 city: "America/Guayaquil",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/Guyana" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/Guyana",
+              },
               {
                 offset: "-03",
                 gtm: "GTM-03:00",
                 city: "America/Halifax",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/Havana" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/Havana",
+              },
               {
                 offset: "-07",
                 gtm: "GTM-07:00",
@@ -1634,7 +1853,11 @@
                 gtm: "GTM-04:00",
                 city: "America/Indianapolis",
               },
-              { offset: "-06", gtm: "GTM-06:00", city: "America/Inuvik" },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "America/Inuvik",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1645,8 +1868,16 @@
                 gtm: "GTM-05:00",
                 city: "America/Jamaica",
               },
-              { offset: "-03", gtm: "GTM-03:00", city: "America/Jujuy" },
-              { offset: "-08", gtm: "GTM-08:00", city: "America/Juneau" },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "America/Jujuy",
+              },
+              {
+                offset: "-08",
+                gtm: "GTM-08:00",
+                city: "America/Juneau",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1667,8 +1898,16 @@
                 gtm: "GTM-04:00",
                 city: "America/Kralendijk",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/La_Paz" },
-              { offset: "-05", gtm: "GTM-05:00", city: "America/Lima" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/La_Paz",
+              },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "America/Lima",
+              },
               {
                 offset: "-07",
                 gtm: "GTM-07:00",
@@ -1684,13 +1923,21 @@
                 gtm: "GTM-04:00",
                 city: "America/Lower_Princes",
               },
-              { offset: "-03", gtm: "GTM-03:00", city: "America/Maceio" },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "America/Maceio",
+              },
               {
                 offset: "-06",
                 gtm: "GTM-06:00",
                 city: "America/Managua",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/Manaus" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/Manaus",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1721,7 +1968,11 @@
                 gtm: "GTM-05:00",
                 city: "America/Menominee",
               },
-              { offset: "-05", gtm: "GTM-05:00", city: "America/Merida" },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "America/Merida",
+              },
               {
                 offset: "-08",
                 gtm: "GTM-08:00",
@@ -1762,7 +2013,11 @@
                 gtm: "GTM-04:00",
                 city: "America/Montserrat",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/Nassau" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/Nassau",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1773,7 +2028,11 @@
                 gtm: "GTM-04:00",
                 city: "America/Nipigon",
               },
-              { offset: "-08", gtm: "GTM-08:00", city: "America/Nome" },
+              {
+                offset: "-08",
+                gtm: "GTM-08:00",
+                city: "America/Nome",
+              },
               {
                 offset: "-02",
                 gtm: "GTM-02:00",
@@ -1794,13 +2053,21 @@
                 gtm: "GTM-05:00",
                 city: "America/North_Dakota/New_Salem",
               },
-              { offset: "-02", gtm: "GTM-02:00", city: "America/Nuuk" },
+              {
+                offset: "-02",
+                gtm: "GTM-02:00",
+                city: "America/Nuuk",
+              },
               {
                 offset: "-06",
                 gtm: "GTM-06:00",
                 city: "America/Ojinaga",
               },
-              { offset: "-05", gtm: "GTM-05:00", city: "America/Panama" },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "America/Panama",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1856,8 +2123,16 @@
                 gtm: "GTM-05:00",
                 city: "America/Rankin_Inlet",
               },
-              { offset: "-03", gtm: "GTM-03:00", city: "America/Recife" },
-              { offset: "-06", gtm: "GTM-06:00", city: "America/Regina" },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "America/Recife",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "America/Regina",
+              },
               {
                 offset: "-05",
                 gtm: "GTM-05:00",
@@ -1908,7 +2183,11 @@
                 gtm: "GTM-06:00",
                 city: "America/Shiprock",
               },
-              { offset: "-08", gtm: "GTM-08:00", city: "America/Sitka" },
+              {
+                offset: "-08",
+                gtm: "GTM-08:00",
+                city: "America/Sitka",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1949,7 +2228,11 @@
                 gtm: "GTM-06:00",
                 city: "America/Tegucigalpa",
               },
-              { offset: "-03", gtm: "GTM-03:00", city: "America/Thule" },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "America/Thule",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -1975,7 +2258,11 @@
                 gtm: "GTM-07:00",
                 city: "America/Vancouver",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "America/Virgin" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "America/Virgin",
+              },
               {
                 offset: "-07",
                 gtm: "GTM-07:00",
@@ -2061,63 +2348,251 @@
                 gtm: "GTM+02:00",
                 city: "Arctic/Longyearbyen",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Aden" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Almaty" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Amman" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Asia/Anadyr" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Aqtau" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Aqtobe" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Ashgabat" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Ashkhabad" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Atyrau" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Baghdad" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Bahrain" },
-              { offset: "+04", gtm: "GTM+04:00", city: "Asia/Baku" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Bangkok" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Barnaul" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Beirut" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Bishkek" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Brunei" },
-              { offset: "+05", gtm: "GTM+05:30", city: "Asia/Calcutta" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Chita" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Aden",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Almaty",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Amman",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Asia/Anadyr",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Aqtau",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Aqtobe",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Ashgabat",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Ashkhabad",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Atyrau",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Baghdad",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Bahrain",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Asia/Baku",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Bangkok",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Barnaul",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Beirut",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Bishkek",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Brunei",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:30",
+                city: "Asia/Calcutta",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Chita",
+              },
               {
                 offset: "+08",
                 gtm: "GTM+08:00",
                 city: "Asia/Choibalsan",
               },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Chongqing" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Chungking" },
-              { offset: "+05", gtm: "GTM+05:30", city: "Asia/Colombo" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Dacca" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Damascus" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Dhaka" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Dili" },
-              { offset: "+04", gtm: "GTM+04:00", city: "Asia/Dubai" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Dushanbe" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Famagusta" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Gaza" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Harbin" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Hebron" },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Chongqing",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Chungking",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:30",
+                city: "Asia/Colombo",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Dacca",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Damascus",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Dhaka",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Dili",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Asia/Dubai",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Dushanbe",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Famagusta",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Gaza",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Harbin",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Hebron",
+              },
               {
                 offset: "+07",
                 gtm: "GTM+07:00",
                 city: "Asia/Ho_Chi_Minh",
               },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Hong_Kong" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Hovd" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Irkutsk" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Istanbul" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Jakarta" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Jayapura" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Jerusalem" },
-              { offset: "+04", gtm: "GTM+04:30", city: "Asia/Kabul" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Asia/Kamchatka" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Karachi" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Kashgar" },
-              { offset: "+05", gtm: "GTM+05:45", city: "Asia/Kathmandu" },
-              { offset: "+05", gtm: "GTM+05:45", city: "Asia/Katmandu" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Khandyga" },
-              { offset: "+05", gtm: "GTM+05:30", city: "Asia/Kolkata" },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Hong_Kong",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Hovd",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Irkutsk",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Istanbul",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Jakarta",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Jayapura",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Jerusalem",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:30",
+                city: "Asia/Kabul",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Asia/Kamchatka",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Karachi",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Kashgar",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:45",
+                city: "Asia/Kathmandu",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:45",
+                city: "Asia/Katmandu",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Khandyga",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:30",
+                city: "Asia/Kolkata",
+              },
               {
                 offset: "+07",
                 gtm: "GTM+07:00",
@@ -2128,15 +2603,51 @@
                 gtm: "GTM+08:00",
                 city: "Asia/Kuala_Lumpur",
               },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Kuching" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Kuwait" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Macao" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Macau" },
-              { offset: "+11", gtm: "GTM+11:00", city: "Asia/Magadan" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Makassar" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Manila" },
-              { offset: "+04", gtm: "GTM+04:00", city: "Asia/Muscat" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Nicosia" },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Kuching",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Kuwait",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Macao",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Macau",
+              },
+              {
+                offset: "+11",
+                gtm: "GTM+11:00",
+                city: "Asia/Magadan",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Makassar",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Manila",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Asia/Muscat",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Nicosia",
+              },
               {
                 offset: "+07",
                 gtm: "GTM+07:00",
@@ -2147,40 +2658,136 @@
                 gtm: "GTM+07:00",
                 city: "Asia/Novosibirsk",
               },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Omsk" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Oral" },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Omsk",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Oral",
+              },
               {
                 offset: "+07",
                 gtm: "GTM+07:00",
                 city: "Asia/Phnom_Penh",
               },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Pontianak" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Pyongyang" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Qatar" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Qostanay" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Qyzylorda" },
-              { offset: "+06", gtm: "GTM+06:30", city: "Asia/Rangoon" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Riyadh" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Saigon" },
-              { offset: "+11", gtm: "GTM+11:00", city: "Asia/Sakhalin" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Samarkand" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Seoul" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Shanghai" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Singapore" },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Pontianak",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Pyongyang",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Qatar",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Qostanay",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Qyzylorda",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:30",
+                city: "Asia/Rangoon",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Riyadh",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Saigon",
+              },
+              {
+                offset: "+11",
+                gtm: "GTM+11:00",
+                city: "Asia/Sakhalin",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Samarkand",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Seoul",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Shanghai",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Singapore",
+              },
               {
                 offset: "+11",
                 gtm: "GTM+11:00",
                 city: "Asia/Srednekolymsk",
               },
-              { offset: "+08", gtm: "GTM+08:00", city: "Asia/Taipei" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Asia/Tashkent" },
-              { offset: "+04", gtm: "GTM+04:00", city: "Asia/Tbilisi" },
-              { offset: "+04", gtm: "GTM+04:30", city: "Asia/Tehran" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Asia/Tel_Aviv" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Thimbu" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Thimphu" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Tokyo" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Tomsk" },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Asia/Taipei",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Asia/Tashkent",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Asia/Tbilisi",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:30",
+                city: "Asia/Tehran",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Asia/Tel_Aviv",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Thimbu",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Thimphu",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Tokyo",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Tomsk",
+              },
               {
                 offset: "+08",
                 gtm: "GTM+08:00",
@@ -2196,22 +2803,46 @@
                 gtm: "GTM+08:00",
                 city: "Asia/Ulan_Bator",
               },
-              { offset: "+06", gtm: "GTM+06:00", city: "Asia/Urumqi" },
-              { offset: "+10", gtm: "GTM+10:00", city: "Asia/Ust-Nera" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Asia/Vientiane" },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Asia/Urumqi",
+              },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Asia/Ust-Nera",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Asia/Vientiane",
+              },
               {
                 offset: "+10",
                 gtm: "GTM+10:00",
                 city: "Asia/Vladivostok",
               },
-              { offset: "+09", gtm: "GTM+09:00", city: "Asia/Yakutsk" },
-              { offset: "+06", gtm: "GTM+06:30", city: "Asia/Yangon" },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Asia/Yakutsk",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:30",
+                city: "Asia/Yangon",
+              },
               {
                 offset: "+05",
                 gtm: "GTM+05:00",
                 city: "Asia/Yekaterinburg",
               },
-              { offset: "+04", gtm: "GTM+04:00", city: "Asia/Yerevan" },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Asia/Yerevan",
+              },
               {
                 offset: "+00",
                 gtm: "GTM+00:00",
@@ -2237,7 +2868,11 @@
                 gtm: "GTM+01:00",
                 city: "Atlantic/Faeroe",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Atlantic/Faroe" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Atlantic/Faroe",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
@@ -2268,7 +2903,11 @@
                 gtm: "GTM-03:00",
                 city: "Atlantic/Stanley",
               },
-              { offset: "+10", gtm: "GTM+10:00", city: "Australia/ACT" },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Australia/ACT",
+              },
               {
                 offset: "+09",
                 gtm: "GTM+09:30",
@@ -2309,7 +2948,11 @@
                 gtm: "GTM+10:00",
                 city: "Australia/Hobart",
               },
-              { offset: "+10", gtm: "GTM+10:30", city: "Australia/LHI" },
+              {
+                offset: "+10",
+                gtm: "GTM+10:30",
+                city: "Australia/LHI",
+              },
               {
                 offset: "+10",
                 gtm: "GTM+10:00",
@@ -2325,7 +2968,11 @@
                 gtm: "GTM+10:00",
                 city: "Australia/Melbourne",
               },
-              { offset: "+10", gtm: "GTM+10:00", city: "Australia/NSW" },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Australia/NSW",
+              },
               {
                 offset: "+09",
                 gtm: "GTM+09:30",
@@ -2361,29 +3008,61 @@
                 gtm: "GTM+10:00",
                 city: "Australia/Victoria",
               },
-              { offset: "+08", gtm: "GTM+08:00", city: "Australia/West" },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Australia/West",
+              },
               {
                 offset: "+09",
                 gtm: "GTM+09:30",
                 city: "Australia/Yancowinna",
               },
-              { offset: "-05", gtm: "GTM-05:00", city: "Brazil/Acre" },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "Brazil/Acre",
+              },
               {
                 offset: "-02",
                 gtm: "GTM-02:00",
                 city: "Brazil/DeNoronha",
               },
-              { offset: "-03", gtm: "GTM-03:00", city: "Brazil/East" },
-              { offset: "-04", gtm: "GTM-04:00", city: "Brazil/West" },
-              { offset: "+02", gtm: "GTM+02:00", city: "CET" },
-              { offset: "-05", gtm: "GTM-05:00", city: "CST6CDT" },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "Brazil/East",
+              },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "Brazil/West",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "CET",
+              },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "CST6CDT",
+              },
               {
                 offset: "-03",
                 gtm: "GTM-03:00",
                 city: "Canada/Atlantic",
               },
-              { offset: "-05", gtm: "GTM-05:00", city: "Canada/Central" },
-              { offset: "-04", gtm: "GTM-04:00", city: "Canada/Eastern" },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "Canada/Central",
+              },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "Canada/Eastern",
+              },
               {
                 offset: "-06",
                 gtm: "GTM-06:00",
@@ -2394,13 +3073,21 @@
                 gtm: "GTM-02:30",
                 city: "Canada/Newfoundland",
               },
-              { offset: "-07", gtm: "GTM-07:00", city: "Canada/Pacific" },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "Canada/Pacific",
+              },
               {
                 offset: "-06",
                 gtm: "GTM-06:00",
                 city: "Canada/Saskatchewan",
               },
-              { offset: "-07", gtm: "GTM-07:00", city: "Canada/Yukon" },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "Canada/Yukon",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
@@ -2411,66 +3098,246 @@
                 gtm: "GTM-06:00",
                 city: "Chile/EasterIsland",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "Cuba" },
-              { offset: "+03", gtm: "GTM+03:00", city: "EET" },
-              { offset: "-05", gtm: "GTM-05:00", city: "EST" },
-              { offset: "-04", gtm: "GTM-04:00", city: "EST5EDT" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Egypt" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Eire" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/GMT" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/GMT+0" },
-              { offset: "-01", gtm: "GTM-01:00", city: "Etc/GMT+1" },
-              { offset: "-10", gtm: "GTM-10:00", city: "Etc/GMT+10" },
-              { offset: "-11", gtm: "GTM-11:00", city: "Etc/GMT+11" },
-              { offset: "-12", gtm: "GTM-12:00", city: "Etc/GMT+12" },
-              { offset: "-02", gtm: "GTM-02:00", city: "Etc/GMT+2" },
-              { offset: "-03", gtm: "GTM-03:00", city: "Etc/GMT+3" },
-              { offset: "-04", gtm: "GTM-04:00", city: "Etc/GMT+4" },
-              { offset: "-05", gtm: "GTM-05:00", city: "Etc/GMT+5" },
-              { offset: "-06", gtm: "GTM-06:00", city: "Etc/GMT+6" },
-              { offset: "-07", gtm: "GTM-07:00", city: "Etc/GMT+7" },
-              { offset: "-08", gtm: "GTM-08:00", city: "Etc/GMT+8" },
-              { offset: "-09", gtm: "GTM-09:00", city: "Etc/GMT+9" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/GMT-0" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Etc/GMT-1" },
-              { offset: "+10", gtm: "GTM+10:00", city: "Etc/GMT-10" },
-              { offset: "+11", gtm: "GTM+11:00", city: "Etc/GMT-11" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Etc/GMT-12" },
-              { offset: "+13", gtm: "GTM+13:00", city: "Etc/GMT-13" },
-              { offset: "+14", gtm: "GTM+14:00", city: "Etc/GMT-14" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Etc/GMT-2" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Etc/GMT-3" },
-              { offset: "+04", gtm: "GTM+04:00", city: "Etc/GMT-4" },
-              { offset: "+05", gtm: "GTM+05:00", city: "Etc/GMT-5" },
-              { offset: "+06", gtm: "GTM+06:00", city: "Etc/GMT-6" },
-              { offset: "+07", gtm: "GTM+07:00", city: "Etc/GMT-7" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Etc/GMT-8" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Etc/GMT-9" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/GMT0" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/Greenwich" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/UCT" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/UTC" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/Universal" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Etc/Zulu" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "Cuba",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "EET",
+              },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "EST",
+              },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "EST5EDT",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Egypt",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Eire",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/GMT",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/GMT+0",
+              },
+              {
+                offset: "-01",
+                gtm: "GTM-01:00",
+                city: "Etc/GMT+1",
+              },
+              {
+                offset: "-10",
+                gtm: "GTM-10:00",
+                city: "Etc/GMT+10",
+              },
+              {
+                offset: "-11",
+                gtm: "GTM-11:00",
+                city: "Etc/GMT+11",
+              },
+              {
+                offset: "-12",
+                gtm: "GTM-12:00",
+                city: "Etc/GMT+12",
+              },
+              {
+                offset: "-02",
+                gtm: "GTM-02:00",
+                city: "Etc/GMT+2",
+              },
+              {
+                offset: "-03",
+                gtm: "GTM-03:00",
+                city: "Etc/GMT+3",
+              },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "Etc/GMT+4",
+              },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "Etc/GMT+5",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "Etc/GMT+6",
+              },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "Etc/GMT+7",
+              },
+              {
+                offset: "-08",
+                gtm: "GTM-08:00",
+                city: "Etc/GMT+8",
+              },
+              {
+                offset: "-09",
+                gtm: "GTM-09:00",
+                city: "Etc/GMT+9",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/GMT-0",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Etc/GMT-1",
+              },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Etc/GMT-10",
+              },
+              {
+                offset: "+11",
+                gtm: "GTM+11:00",
+                city: "Etc/GMT-11",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Etc/GMT-12",
+              },
+              {
+                offset: "+13",
+                gtm: "GTM+13:00",
+                city: "Etc/GMT-13",
+              },
+              {
+                offset: "+14",
+                gtm: "GTM+14:00",
+                city: "Etc/GMT-14",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Etc/GMT-2",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Etc/GMT-3",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Etc/GMT-4",
+              },
+              {
+                offset: "+05",
+                gtm: "GTM+05:00",
+                city: "Etc/GMT-5",
+              },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Etc/GMT-6",
+              },
+              {
+                offset: "+07",
+                gtm: "GTM+07:00",
+                city: "Etc/GMT-7",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Etc/GMT-8",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Etc/GMT-9",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/GMT0",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/Greenwich",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/UCT",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/UTC",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/Universal",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Etc/Zulu",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Europe/Amsterdam",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Andorra" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Andorra",
+              },
               {
                 offset: "+04",
                 gtm: "GTM+04:00",
                 city: "Europe/Astrakhan",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Athens" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Europe/Belfast" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Athens",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Europe/Belfast",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Europe/Belgrade",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Berlin" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Berlin",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
@@ -2506,7 +3373,11 @@
                 gtm: "GTM+02:00",
                 city: "Europe/Copenhagen",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Europe/Dublin" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Europe/Dublin",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
@@ -2532,48 +3403,116 @@
                 gtm: "GTM+03:00",
                 city: "Europe/Istanbul",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Europe/Jersey" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Europe/Jersey",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Europe/Kaliningrad",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Kiev" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Kirov" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Europe/Lisbon" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Kiev",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Kirov",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Europe/Lisbon",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Europe/Ljubljana",
               },
-              { offset: "+01", gtm: "GTM+01:00", city: "Europe/London" },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Europe/London",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Europe/Luxembourg",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Madrid" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Malta" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Madrid",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Malta",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
                 city: "Europe/Mariehamn",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Minsk" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Monaco" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Moscow" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Nicosia" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Oslo" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Paris" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Minsk",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Monaco",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Moscow",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Nicosia",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Oslo",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Paris",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Europe/Podgorica",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Prague" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Riga" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Rome" },
-              { offset: "+04", gtm: "GTM+04:00", city: "Europe/Samara" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Prague",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Riga",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Rome",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Europe/Samara",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
@@ -2584,21 +3523,41 @@
                 gtm: "GTM+02:00",
                 city: "Europe/Sarajevo",
               },
-              { offset: "+04", gtm: "GTM+04:00", city: "Europe/Saratov" },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Europe/Saratov",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
                 city: "Europe/Simferopol",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Skopje" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Sofia" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Skopje",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Sofia",
+              },
               {
                 offset: "+02",
                 gtm: "GTM+02:00",
                 city: "Europe/Stockholm",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Tallinn" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Tirane" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Tallinn",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Tirane",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
@@ -2614,52 +3573,136 @@
                 gtm: "GTM+03:00",
                 city: "Europe/Uzhgorod",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Vaduz" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Vatican" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Vienna" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Europe/Vilnius" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Vaduz",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Vatican",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Vienna",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Europe/Vilnius",
+              },
               {
                 offset: "+04",
                 gtm: "GTM+04:00",
                 city: "Europe/Volgograd",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Warsaw" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Zagreb" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Warsaw",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Zagreb",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
                 city: "Europe/Zaporozhye",
               },
-              { offset: "+02", gtm: "GTM+02:00", city: "Europe/Zurich" },
-              { offset: "+01", gtm: "GTM+01:00", city: "GB" },
-              { offset: "+01", gtm: "GTM+01:00", city: "GB-Eire" },
-              { offset: "+00", gtm: "GTM+00:00", city: "GMT" },
-              { offset: "+00", gtm: "GTM+00:00", city: "GMT+0" },
-              { offset: "+00", gtm: "GTM+00:00", city: "GMT-0" },
-              { offset: "+00", gtm: "GTM+00:00", city: "GMT0" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Greenwich" },
-              { offset: "-10", gtm: "GTM-10:00", city: "HST" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Hongkong" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Iceland" },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Europe/Zurich",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "GB",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "GB-Eire",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "GMT",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "GMT+0",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "GMT-0",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "GMT0",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Greenwich",
+              },
+              {
+                offset: "-10",
+                gtm: "GTM-10:00",
+                city: "HST",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Hongkong",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Iceland",
+              },
               {
                 offset: "+03",
                 gtm: "GTM+03:00",
                 city: "Indian/Antananarivo",
               },
-              { offset: "+06", gtm: "GTM+06:00", city: "Indian/Chagos" },
+              {
+                offset: "+06",
+                gtm: "GTM+06:00",
+                city: "Indian/Chagos",
+              },
               {
                 offset: "+07",
                 gtm: "GTM+07:00",
                 city: "Indian/Christmas",
               },
-              { offset: "+06", gtm: "GTM+06:30", city: "Indian/Cocos" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Indian/Comoro" },
+              {
+                offset: "+06",
+                gtm: "GTM+06:30",
+                city: "Indian/Cocos",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Indian/Comoro",
+              },
               {
                 offset: "+05",
                 gtm: "GTM+05:00",
                 city: "Indian/Kerguelen",
               },
-              { offset: "+04", gtm: "GTM+04:00", city: "Indian/Mahe" },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Indian/Mahe",
+              },
               {
                 offset: "+05",
                 gtm: "GTM+05:00",
@@ -2670,30 +3713,106 @@
                 gtm: "GTM+04:00",
                 city: "Indian/Mauritius",
               },
-              { offset: "+03", gtm: "GTM+03:00", city: "Indian/Mayotte" },
-              { offset: "+04", gtm: "GTM+04:00", city: "Indian/Reunion" },
-              { offset: "+04", gtm: "GTM+04:30", city: "Iran" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Israel" },
-              { offset: "-05", gtm: "GTM-05:00", city: "Jamaica" },
-              { offset: "+09", gtm: "GTM+09:00", city: "Japan" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Kwajalein" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Libya" },
-              { offset: "+02", gtm: "GTM+02:00", city: "MET" },
-              { offset: "-07", gtm: "GTM-07:00", city: "MST" },
-              { offset: "-06", gtm: "GTM-06:00", city: "MST7MDT" },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Indian/Mayotte",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:00",
+                city: "Indian/Reunion",
+              },
+              {
+                offset: "+04",
+                gtm: "GTM+04:30",
+                city: "Iran",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Israel",
+              },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "Jamaica",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Japan",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Kwajalein",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Libya",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "MET",
+              },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "MST",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "MST7MDT",
+              },
               {
                 offset: "-07",
                 gtm: "GTM-07:00",
                 city: "Mexico/BajaNorte",
               },
-              { offset: "-06", gtm: "GTM-06:00", city: "Mexico/BajaSur" },
-              { offset: "-05", gtm: "GTM-05:00", city: "Mexico/General" },
-              { offset: "+12", gtm: "GTM+12:00", city: "NZ" },
-              { offset: "+12", gtm: "GTM+12:45", city: "NZ-CHAT" },
-              { offset: "-06", gtm: "GTM-06:00", city: "Navajo" },
-              { offset: "+08", gtm: "GTM+08:00", city: "PRC" },
-              { offset: "-07", gtm: "GTM-07:00", city: "PST8PDT" },
-              { offset: "+13", gtm: "GTM+13:00", city: "Pacific/Apia" },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "Mexico/BajaSur",
+              },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "Mexico/General",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "NZ",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:45",
+                city: "NZ-CHAT",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "Navajo",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "PRC",
+              },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "PST8PDT",
+              },
+              {
+                offset: "+13",
+                gtm: "GTM+13:00",
+                city: "Pacific/Apia",
+              },
               {
                 offset: "+12",
                 gtm: "GTM+12:00",
@@ -2709,9 +3828,21 @@
                 gtm: "GTM+12:45",
                 city: "Pacific/Chatham",
               },
-              { offset: "+10", gtm: "GTM+10:00", city: "Pacific/Chuuk" },
-              { offset: "-06", gtm: "GTM-06:00", city: "Pacific/Easter" },
-              { offset: "+11", gtm: "GTM+11:00", city: "Pacific/Efate" },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Pacific/Chuuk",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "Pacific/Easter",
+              },
+              {
+                offset: "+11",
+                gtm: "GTM+11:00",
+                city: "Pacific/Efate",
+              },
               {
                 offset: "+13",
                 gtm: "GTM+13:00",
@@ -2722,7 +3853,11 @@
                 gtm: "GTM+13:00",
                 city: "Pacific/Fakaofo",
               },
-              { offset: "+12", gtm: "GTM+12:00", city: "Pacific/Fiji" },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Pacific/Fiji",
+              },
               {
                 offset: "+12",
                 gtm: "GTM+12:00",
@@ -2743,7 +3878,11 @@
                 gtm: "GTM+11:00",
                 city: "Pacific/Guadalcanal",
               },
-              { offset: "+10", gtm: "GTM+10:00", city: "Pacific/Guam" },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Pacific/Guam",
+              },
               {
                 offset: "-10",
                 gtm: "GTM-10:00",
@@ -2759,33 +3898,61 @@
                 gtm: "GTM+14:00",
                 city: "Pacific/Kiritimati",
               },
-              { offset: "+11", gtm: "GTM+11:00", city: "Pacific/Kosrae" },
+              {
+                offset: "+11",
+                gtm: "GTM+11:00",
+                city: "Pacific/Kosrae",
+              },
               {
                 offset: "+12",
                 gtm: "GTM+12:00",
                 city: "Pacific/Kwajalein",
               },
-              { offset: "+12", gtm: "GTM+12:00", city: "Pacific/Majuro" },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Pacific/Majuro",
+              },
               {
                 offset: "-09",
                 gtm: "GTM-09:30",
                 city: "Pacific/Marquesas",
               },
-              { offset: "-11", gtm: "GTM-11:00", city: "Pacific/Midway" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Pacific/Nauru" },
-              { offset: "-11", gtm: "GTM-11:00", city: "Pacific/Niue" },
+              {
+                offset: "-11",
+                gtm: "GTM-11:00",
+                city: "Pacific/Midway",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Pacific/Nauru",
+              },
+              {
+                offset: "-11",
+                gtm: "GTM-11:00",
+                city: "Pacific/Niue",
+              },
               {
                 offset: "+11",
                 gtm: "GTM+11:00",
                 city: "Pacific/Norfolk",
               },
-              { offset: "+11", gtm: "GTM+11:00", city: "Pacific/Noumea" },
+              {
+                offset: "+11",
+                gtm: "GTM+11:00",
+                city: "Pacific/Noumea",
+              },
               {
                 offset: "-11",
                 gtm: "GTM-11:00",
                 city: "Pacific/Pago_Pago",
               },
-              { offset: "+09", gtm: "GTM+09:00", city: "Pacific/Palau" },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "Pacific/Palau",
+              },
               {
                 offset: "-08",
                 gtm: "GTM-08:00",
@@ -2796,7 +3963,11 @@
                 gtm: "GTM+11:00",
                 city: "Pacific/Pohnpei",
               },
-              { offset: "+11", gtm: "GTM+11:00", city: "Pacific/Ponape" },
+              {
+                offset: "+11",
+                gtm: "GTM+11:00",
+                city: "Pacific/Ponape",
+              },
               {
                 offset: "+10",
                 gtm: "GTM+10:00",
@@ -2807,61 +3978,185 @@
                 gtm: "GTM-10:00",
                 city: "Pacific/Rarotonga",
               },
-              { offset: "+10", gtm: "GTM+10:00", city: "Pacific/Saipan" },
-              { offset: "-11", gtm: "GTM-11:00", city: "Pacific/Samoa" },
-              { offset: "-10", gtm: "GTM-10:00", city: "Pacific/Tahiti" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Pacific/Tarawa" },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Pacific/Saipan",
+              },
+              {
+                offset: "-11",
+                gtm: "GTM-11:00",
+                city: "Pacific/Samoa",
+              },
+              {
+                offset: "-10",
+                gtm: "GTM-10:00",
+                city: "Pacific/Tahiti",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Pacific/Tarawa",
+              },
               {
                 offset: "+13",
                 gtm: "GTM+13:00",
                 city: "Pacific/Tongatapu",
               },
-              { offset: "+10", gtm: "GTM+10:00", city: "Pacific/Truk" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Pacific/Wake" },
-              { offset: "+12", gtm: "GTM+12:00", city: "Pacific/Wallis" },
-              { offset: "+10", gtm: "GTM+10:00", city: "Pacific/Yap" },
-              { offset: "+02", gtm: "GTM+02:00", city: "Poland" },
-              { offset: "+01", gtm: "GTM+01:00", city: "Portugal" },
-              { offset: "+08", gtm: "GTM+08:00", city: "ROC" },
-              { offset: "+09", gtm: "GTM+09:00", city: "ROK" },
-              { offset: "+08", gtm: "GTM+08:00", city: "Singapore" },
-              { offset: "+03", gtm: "GTM+03:00", city: "Turkey" },
-              { offset: "+00", gtm: "GTM+00:00", city: "UCT" },
-              { offset: "-08", gtm: "GTM-08:00", city: "US/Alaska" },
-              { offset: "-09", gtm: "GTM-09:00", city: "US/Aleutian" },
-              { offset: "-07", gtm: "GTM-07:00", city: "US/Arizona" },
-              { offset: "-05", gtm: "GTM-05:00", city: "US/Central" },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Pacific/Truk",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Pacific/Wake",
+              },
+              {
+                offset: "+12",
+                gtm: "GTM+12:00",
+                city: "Pacific/Wallis",
+              },
+              {
+                offset: "+10",
+                gtm: "GTM+10:00",
+                city: "Pacific/Yap",
+              },
+              {
+                offset: "+02",
+                gtm: "GTM+02:00",
+                city: "Poland",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "Portugal",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "ROC",
+              },
+              {
+                offset: "+09",
+                gtm: "GTM+09:00",
+                city: "ROK",
+              },
+              {
+                offset: "+08",
+                gtm: "GTM+08:00",
+                city: "Singapore",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "Turkey",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "UCT",
+              },
+              {
+                offset: "-08",
+                gtm: "GTM-08:00",
+                city: "US/Alaska",
+              },
+              {
+                offset: "-09",
+                gtm: "GTM-09:00",
+                city: "US/Aleutian",
+              },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "US/Arizona",
+              },
+              {
+                offset: "-05",
+                gtm: "GTM-05:00",
+                city: "US/Central",
+              },
               {
                 offset: "-04",
                 gtm: "GTM-04:00",
                 city: "US/East-Indiana",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "US/Eastern" },
-              { offset: "-10", gtm: "GTM-10:00", city: "US/Hawaii" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "US/Eastern",
+              },
+              {
+                offset: "-10",
+                gtm: "GTM-10:00",
+                city: "US/Hawaii",
+              },
               {
                 offset: "-05",
                 gtm: "GTM-05:00",
                 city: "US/Indiana-Starke",
               },
-              { offset: "-04", gtm: "GTM-04:00", city: "US/Michigan" },
-              { offset: "-06", gtm: "GTM-06:00", city: "US/Mountain" },
-              { offset: "-07", gtm: "GTM-07:00", city: "US/Pacific" },
-              { offset: "-07", gtm: "GTM-07:00", city: "US/Pacific-New" },
-              { offset: "-11", gtm: "GTM-11:00", city: "US/Samoa" },
-              { offset: "+00", gtm: "GTM+00:00", city: "UTC" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Universal" },
-              { offset: "+03", gtm: "GTM+03:00", city: "W-SU" },
-              { offset: "+01", gtm: "GTM+01:00", city: "WET" },
-              { offset: "+00", gtm: "GTM+00:00", city: "Zulu" },
+              {
+                offset: "-04",
+                gtm: "GTM-04:00",
+                city: "US/Michigan",
+              },
+              {
+                offset: "-06",
+                gtm: "GTM-06:00",
+                city: "US/Mountain",
+              },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "US/Pacific",
+              },
+              {
+                offset: "-07",
+                gtm: "GTM-07:00",
+                city: "US/Pacific-New",
+              },
+              {
+                offset: "-11",
+                gtm: "GTM-11:00",
+                city: "US/Samoa",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "UTC",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Universal",
+              },
+              {
+                offset: "+03",
+                gtm: "GTM+03:00",
+                city: "W-SU",
+              },
+              {
+                offset: "+01",
+                gtm: "GTM+01:00",
+                city: "WET",
+              },
+              {
+                offset: "+00",
+                gtm: "GTM+00:00",
+                city: "Zulu",
+              },
             ];
             var eventData = [
               {
                 name: "Day 1",
-                date: "10/06/2020", // the date
-                from: "09:30:00", // start time (may expand as a scope)
-                to: "13:00:00", // end time (may expand as a scope)
-                defaultCity: "New York", // Default timezone
-                defaultTimezoneOffset: "-4", // in GMT
+                date: "10/06/2020",
+                from: "09:30:00",
+                to: "13:00:00",
+                defaultCity: "New York",
+                defaultTimezoneOffset: "-4",
                 agenda: [
                   {
                     name: "Main Track",
@@ -2869,8 +4164,8 @@
                     backgroundColor: "#104836",
                     items: [
                       {
-                        from: "10:00:00", // start time (exact)
-                        to: "10:10:00", // end time (exact)
+                        from: "10:00:00",
+                        to: "10:10:00",
                         title: "Championing the female economy",
                         translation: "Potenciando la economía femenina",
                         url: "#",
@@ -2881,16 +4176,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "2",
                       },
                       {
-                        from: "10:10:00", // start time (exact)
-                        to: "10:20:00", // end time (exact)
+                        from: "10:10:00",
+                        to: "10:20:00",
                         title: "Keynote",
                         translation: "Discurso de apertura",
                         url: "#",
@@ -2901,16 +4196,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Keynote",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "10:20:00", // start time (exact)
-                        to: "10:30:00", // end time (exact)
+                        from: "10:20:00",
+                        to: "10:30:00",
                         title: "Data driving the female economy",
                         translation: "Datos que impulsan la economía femenina",
                         url: "#",
@@ -2921,16 +4216,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Presentation",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "10:30:00", // start time (exact)
-                        to: "11:15:00", // end time (exact)
+                        from: "10:30:00",
+                        to: "11:15:00",
                         title:
                           "The opportunity of championing the female economy",
                         translation:
@@ -2943,16 +4238,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Panel Discussion",
                         numOfSpeakers: "5",
                       },
                       {
-                        from: "11:15:00", // start time (exact)
-                        to: "11:25:00", // end time (exact)
+                        from: "11:15:00",
+                        to: "11:25:00",
                         title: "Break",
                         translation: "",
                         url: "#",
@@ -2963,16 +4258,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#2c2c2c", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#2c2c2c",
+                        textColor: "#fff",
                         highlightBg: "#cacaca",
                         passedBg: "#b3afaf",
                         sessionType: "",
                         numOfSpeakers: "",
                       },
                       {
-                        from: "11:25:00", // start time (exact)
-                        to: "11:35:00", // end time (exact)
+                        from: "11:25:00",
+                        to: "11:35:00",
                         title:
                           "Accelerating women's economic power through non-financial services",
                         translation:
@@ -2985,16 +4280,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Fireside Chat",
                         numOfSpeakers: "2",
                       },
                       {
-                        from: "12:05:00", // start time (exact)
-                        to: "12:15:00", // end time (exact)
+                        from: "12:05:00",
+                        to: "12:15:00",
                         title: "Regroup and consolidation",
                         translation: "Reagrupamiento y consolidación",
                         url: "#",
@@ -3005,16 +4300,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "12:15:00", // start time (exact)
-                        to: "12:35:00", // end time (exact)
+                        from: "12:15:00",
+                        to: "12:35:00",
                         title: "Wealth tech: A new way to make money",
                         translation:
                           "Tecnología en la gestión de patrimonios: una nueva forma de ganar dinero",
@@ -3026,16 +4321,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "",
                         numOfSpeakers: "",
                       },
                       {
-                        from: "12:35:00", // start time (exact)
-                        to: "12:55:00", // end time (exact)
+                        from: "12:35:00",
+                        to: "12:55:00",
                         title: "Day 1 highlights and learnings",
                         translation:
                           "Puntos destacados y aprendizajes del día 1",
@@ -3047,8 +4342,8 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
@@ -3065,8 +4360,8 @@
                     {
                       title: "Tapping into SME Ecosystem",
                       translation: "Aprovechando el ecosistema de las PYMEs",
-                      from: "11:35:00", // start time (exact)
-                      to: "12:05:00", // end time (exact)
+                      from: "11:35:00",
+                      to: "12:05:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3085,8 +4380,8 @@
                       title: "Upskilling through eCommerce platforms",
                       translation:
                         "Mejorando las habilidades a través de las plataformas de comercio electrónico",
-                      from: "11:35:00", // start time (exact)
-                      to: "12:05:00", // end time (exact)
+                      from: "11:35:00",
+                      to: "12:05:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3105,8 +4400,8 @@
                       title:
                         "El caso de negocios y la importancia de medir los servicios no financieros  (eñ español)",
                       translation: "",
-                      from: "11:35:00", // start time (exact)
-                      to: "12:05:00", // end time (exact)
+                      from: "11:35:00",
+                      to: "12:05:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3124,8 +4419,8 @@
                     {
                       title: "NFS business case & how to measure it",
                       translation: "",
-                      from: "11:35:00", // start time (exact)
-                      to: "12:05:00", // end time (exact)
+                      from: "11:35:00",
+                      to: "12:05:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3145,11 +4440,11 @@
               },
               {
                 name: "Day 2",
-                date: "10/07/2020", // the date
-                from: "06:30:00", // start time (may expand as a scope)
-                to: "10:30:00", // end time (may expand as a scope)
-                defaultCity: "New York", // Default timezone
-                defaultTimezoneOffset: "-4", // in GMT
+                date: "10/07/2020",
+                from: "06:30:00",
+                to: "10:30:00",
+                defaultCity: "New York",
+                defaultTimezoneOffset: "-4",
                 agenda: [
                   {
                     name: "Main Track",
@@ -3157,8 +4452,8 @@
                     backgroundColor: "#104836",
                     items: [
                       {
-                        from: "07:00:00", // start time (exact)
-                        to: "07:05:00", // end time (exact)
+                        from: "07:00:00",
+                        to: "07:05:00",
                         title:
                           "The transformational opportunity of fintech on the female economy",
                         translation:
@@ -3171,16 +4466,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "07:05:00", // start time (exact)
-                        to: "07:25:00", // end time (exact)
+                        from: "07:05:00",
+                        to: "07:25:00",
                         title:
                           "Blue sky vision - the impact of fintech on women's markets",
                         translation:
@@ -3193,16 +4488,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Fireside Chat",
                         numOfSpeakers: "2",
                       },
                       {
-                        from: "07:25:00", // start time (exact)
-                        to: "07:45:00", // end time (exact)
+                        from: "07:25:00",
+                        to: "07:45:00",
                         title: "Alliance fintech research",
                         translation: "Investigación fintech de la Alianza",
                         url: "#",
@@ -3213,16 +4508,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Fireside Chat",
                         numOfSpeakers: "2",
                       },
                       {
-                        from: "07:45:00", // start time (exact)
-                        to: "08:30:00", // end time (exact)
+                        from: "07:45:00",
+                        to: "08:30:00",
                         title:
                           "How fintechs are and can support the full financial inclusion of women",
                         translation:
@@ -3235,16 +4530,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Panel Discussion",
                         numOfSpeakers: "5",
                       },
                       {
-                        from: "08:30:00", // start time (exact)
-                        to: "08:35:00", // end time (exact)
+                        from: "08:30:00",
+                        to: "08:35:00",
                         title: "Break",
                         translation: "",
                         url: "#",
@@ -3255,16 +4550,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#2c2c2c", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#2c2c2c",
+                        textColor: "#fff",
                         highlightBg: "#cacaca",
                         passedBg: "#b3afaf",
                         sessionType: "",
                         numOfSpeakers: "",
                       },
                       {
-                        from: "08:35:00", // start time (exact)
-                        to: "08:40:00", // end time (exact)
+                        from: "08:35:00",
+                        to: "08:40:00",
                         title: "Reimagining fintech as gender intelligent",
                         translation:
                           "Reimaginando a las fintechs con inteligencia de género",
@@ -3276,16 +4571,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "09:15:00", // start time (exact)
-                        to: "09:25:00", // end time (exact)
+                        from: "09:15:00",
+                        to: "09:25:00",
                         title: "Regroup and consolidation",
                         translation: "Reagrupamiento y consolidación",
                         url: "#",
@@ -3296,16 +4591,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "09:25:00", // start time (exact)
-                        to: "09:55:00", // end time (exact)
+                        from: "09:25:00",
+                        to: "09:55:00",
                         title: "e-Hackathon pitches & final vote",
                         translation:
                           "Presentaciones finales del e-Hackathon y votación fina",
@@ -3317,16 +4612,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Presentation",
                         numOfSpeakers: "2",
                       },
                       {
-                        from: "09:55:00", // start time (exact)
-                        to: "10:05:00", // end time (exact)
+                        from: "09:55:00",
+                        to: "10:05:00",
                         title: "Day 2 highlights and learnings",
                         translation:
                           "Puntos destacados y aprendizajes del día 2",
@@ -3338,8 +4633,8 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
@@ -3357,8 +4652,8 @@
                       title: "Breakout 1: Data bias & course corrections",
                       translation:
                         "Sesión de trabajo 1: sesgo de datos y cambios de procesos",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
+                      from: "08:40:00",
+                      to: "09:15:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3378,8 +4673,8 @@
                         "Breakout 2: Incentives & ecosystem support - defining stakeholder roles",
                       translation:
                         "Sesión de trabajo 2: Incentivos y apoyo al ecosistema: definiendo los roles de los grupos de interés",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
+                      from: "08:40:00",
+                      to: "09:15:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3399,8 +4694,8 @@
                         "Breakout 3: Business case For gender intelligent fintech (Spanish)",
                       translation:
                         "Sesión de trabajo 3: El caso de negocio para las fintech con inteligencia de género",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
+                      from: "08:40:00",
+                      to: "09:15:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3419,8 +4714,8 @@
                       title: "Breakout 4: Investing in women-focused fintechs",
                       translation:
                         "Sesión de trabajo 4: Invirtiendo en las fintechs centradas en las mujeres",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
+                      from: "08:40:00",
+                      to: "09:15:00",
                       bgColor: "#3cb4ff",
                       textColor: "#fff",
                       highlightBg: "#6bd5ff",
@@ -3440,11 +4735,11 @@
               },
               {
                 name: "Day 3",
-                date: "10/08/2020", // the date
-                from: "08:30:00", // start time (may expand as a scope)
-                to: "12:30:00", // end time (may expand as a scope)
-                defaultCity: "New York", // Default timezone
-                defaultTimezoneOffset: "-4", // in GMT
+                date: "10/08/2020",
+                from: "08:30:00",
+                to: "12:30:00",
+                defaultCity: "New York",
+                defaultTimezoneOffset: "-4",
                 agenda: [
                   {
                     name: "Main Track",
@@ -3452,8 +4747,8 @@
                     backgroundColor: "#104836",
                     items: [
                       {
-                        from: "09:00:00", // start time (exact)
-                        to: "09:05:00", // end time (exact)
+                        from: "09:00:00",
+                        to: "09:05:00",
                         title: "The future of work",
                         translation: "El futuro del trabajo",
                         url: "#",
@@ -3464,16 +4759,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "09:05:00", // start time (exact)
-                        to: "09:25:00", // end time (exact)
+                        from: "09:05:00",
+                        to: "09:25:00",
                         title:
                           "Building the workforce of tomorrow - diversity & inclusion post pandemic",
                         translation:
@@ -3486,16 +4781,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Fireside Chat",
                         numOfSpeakers: "2",
                       },
                       {
-                        from: "09:25:00", // start time (exact)
-                        to: "10:10:00", // end time (exact)
+                        from: "09:25:00",
+                        to: "10:10:00",
                         title:
                           "Building the workforce of tomorrow - diversity & inclusion post pandemic",
                         translation: "",
@@ -3507,16 +4802,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Fireside Chat",
                         numOfSpeakers: "2",
                       },
                       {
-                        from: "10:10:00", // start time (exact)
-                        to: "10:15:00", // end time (exact)
+                        from: "10:10:00",
+                        to: "10:15:00",
                         title: "Break",
                         translation: "",
                         url: "#",
@@ -3527,16 +4822,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#2c2c2c", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#2c2c2c",
+                        textColor: "#fff",
                         highlightBg: "#cacaca",
                         passedBg: "#b3afaf",
                         sessionType: "Panel Discussion",
                         numOfSpeakers: "5",
                       },
                       {
-                        from: "10:15:00", // start time (exact)
-                        to: "10:50:00", // end time (exact)
+                        from: "10:15:00",
+                        to: "10:50:00",
                         title: "Interactive session or gamification",
                         translation: "Sesión interactiva o gamificación",
                         url: "#",
@@ -3547,16 +4842,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "",
                         numOfSpeakers: "",
                       },
                       {
-                        from: "10:50:00", // start time (exact)
-                        to: "11:35:00", // end time (exact)
+                        from: "10:50:00",
+                        to: "11:35:00",
                         title:
                           "Doing Business 2020 & beyond: serving customers in the new normal",
                         translation:
@@ -3569,16 +4864,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "11:35:00", // start time (exact)
-                        to: "11:55:00", // end time (exact)
+                        from: "11:35:00",
+                        to: "11:55:00",
                         title: "Women SME platform",
                         translation: "Plataforma PYMEs propiedad de mujeres",
                         url: "#",
@@ -3589,16 +4884,16 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Remarks",
                         numOfSpeakers: "1",
                       },
                       {
-                        from: "11:55:00", // start time (exact)
-                        to: "12:05:00", // end time (exact)
+                        from: "11:55:00",
+                        to: "12:05:00",
                         title: "Closing remarks",
                         translation: "Palabras de clausura",
                         url: "#",
@@ -3609,8 +4904,8 @@
                           },
                         ],
                         tooltip: "",
-                        bgColor: "#104836", // background color customizable
-                        textColor: "#fff", // text color customizable
+                        bgColor: "#104836",
+                        textColor: "#fff",
                         highlightBg: "#42d886",
                         passedBg: "#b3afaf",
                         sessionType: "Presentation",
@@ -3625,7 +4920,6 @@
             var txtTimeZoneWrap = document.querySelector(".currentTz");
             var txtTimeZone = document.createElement("span");
             var changeTimeZoneBtn = document.querySelector(".changeTz");
-
             marker.style.display = "none";
             txtTimeZoneWrap.textContent = "Times displayed based on: ";
             txtTimeZone.className = "current-timezone";
@@ -3639,7 +4933,6 @@
             agendaTarget.appendChild(theAgendaUI);
             addDayTab();
             clearInterval(checkAgendaTarget);
-
             changeTimeZoneBtn.addEventListener("click", changeTimeZone);
           }
         });
