@@ -129,6 +129,10 @@
         padding: 10px;
         text-align: center;
         font-weight: 700;
+        border-bottom: 1px solid #eaeaea;
+      }
+      .agenda-body .col-1 div:last-child {
+        border-bottom: none;
       }
       .agenda-body .col-1 .desc {
         font-size: 10px;
@@ -343,10 +347,10 @@
         </div>
       </div>
       <div class="agenda-body">
-        <div class="col-1">
+        <div class="col-1" id="right-col">
           <div class="space"></div>
-          <div class="agenda-calendar-label"></div>
-          <div class="agenda-breakout-label"></div>
+          <!-- <div class="agenda-calendar-label"></div>
+          <div class="agenda-breakout-label"></div> -->
         </div>
         <div class="col-2">
           <div class="mid-col-1">
@@ -549,92 +553,110 @@
               dragScroll();
             };
             var fillCalendarBlocks = function fillCalendarBlocks(data) {
-              var calendarBlocks = document.querySelector(".calendar-blocks");
-              calendarBlocks.innerHTML = "";
-              var from = new Date(data.date + " " + data.from);
-              var to = new Date(data.date + " " + data.to);
-              var secondsDiff = checkSecondsDiff(from, to);
-              var counter = 0;
-              var base = parseInt(data.from);
-              for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
-                if (counter > 55) {
-                  base++;
-                  counter = 0;
-                }
-                var block = document.createElement("div");
-                block.classList.add("block");
-                calendarBlocks.appendChild(block);
-                counter += 5;
-              }
-              for (var ses = 0; ses < data.agenda.items.length; ses++) {
-                var thisAgenda = document.createElement("a");
-                var thisAgendaImages = document.createElement("div");
-                var thisAgendaTitle = document.createElement("p");
-                var thisAgendaTitleTrans = document.createElement("span");
-                var thisAgendaTooltip = document.createElement("p");
-                var thisAgendaTooltipTrans = document.createElement("span");
-                var startFrom = new Date(
-                  data.date + " " + data.agenda.items[ses].from
-                );
-                var endTo = new Date(
-                  data.date + " " + data.agenda.items[ses].to
-                );
-                var thisAgendaWidth =
-                  (checkSecondsDiff(startFrom, endTo) / 60 / 5) * 60 - 2;
-                var left1Pos =
-                  (checkSecondsDiff(
-                    new Date(data.date + " " + data.from),
-                    startFrom
-                  ) /
-                    60 /
-                    5) *
-                    60 +
-                  31;
-                if (data.agenda.items[ses].people.length) {
-                  for (
-                    var peps = 0;
-                    peps < data.agenda.items[ses].people.length;
-                    peps++
-                  ) {
-                    if (data.agenda.items[ses].people[peps].image) {
-                      var pepsImg = document.createElement("img");
-                      pepsImg.src = data.agenda.items[ses].people[peps].image;
-                      pepsImg.alt = data.agenda.items[ses].people[peps].name;
-                      thisAgendaImages.appendChild(pepsImg);
+              var agendaCalendar = document.querySelector(".agenda-calendar");
+              if (data.agenda.length) {
+                for (var blck = 0; blck < data.agenda.length; blck++) {
+                  var calendarBlocks = document.createElement("div");
+                  calendarBlocks.className = "calendar-blocks";
+
+                  var from = new Date(data.date + " " + data.from);
+                  var to = new Date(data.date + " " + data.to);
+                  var secondsDiff = checkSecondsDiff(from, to);
+                  var counter = 0;
+                  var base = parseInt(data.from);
+
+                  for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
+                    if (counter > 55) {
+                      base++;
+                      counter = 0;
                     }
-                    continue;
+                    var block = document.createElement("div");
+                    block.classList.add("block");
+                    calendarBlocks.appendChild(block);
+                    counter += 5;
                   }
+
+                  for (
+                    var ses = 0;
+                    ses < data.agenda[blck].items.length;
+                    ses++
+                  ) {
+                    var thisAgenda = document.createElement("a");
+                    var thisAgendaImages = document.createElement("div");
+                    var thisAgendaTitle = document.createElement("p");
+                    var thisAgendaTitleTrans = document.createElement("span");
+                    var thisAgendaTooltip = document.createElement("p");
+                    var thisAgendaTooltipTrans = document.createElement("span");
+                    var startFrom = new Date(
+                      data.date + " " + data.agenda[blck].items[ses].from
+                    );
+                    var endTo = new Date(
+                      data.date + " " + data.agenda[blck].items[ses].to
+                    );
+                    var thisAgendaWidth =
+                      (checkSecondsDiff(startFrom, endTo) / 60 / 5) * 60 - 2;
+                    var left1Pos =
+                      (checkSecondsDiff(
+                        new Date(data.date + " " + data.from),
+                        startFrom
+                      ) /
+                        60 /
+                        5) *
+                        60 +
+                      31;
+                    if (data.agenda[blck].items[ses].people.length) {
+                      for (
+                        var peps = 0;
+                        peps < data.agenda[blck].items[ses].people.length;
+                        peps++
+                      ) {
+                        if (data.agenda[blck].items[ses].people[peps].image) {
+                          var pepsImg = document.createElement("img");
+                          pepsImg.src =
+                            data.agenda[blck].items[ses].people[peps].image;
+                          pepsImg.alt =
+                            data.agenda[blck].items[ses].people[peps].name;
+                          thisAgendaImages.appendChild(pepsImg);
+                        }
+                        continue;
+                      }
+                    }
+                    thisAgendaTitle.textContent =
+                      data.agenda[blck].items[ses].title;
+                    thisAgendaTitle.style.color =
+                      data.agenda[blck].items[ses].textColor;
+                    thisAgendaTitleTrans.style.fontStyle = "italic";
+                    thisAgendaTitleTrans.textContent =
+                      data.agenda[blck].items[ses].translation;
+                    thisAgendaTitleTrans.style.color =
+                      data.agenda[blck].items[ses].textColor;
+                    thisAgendaTooltip.className = "tooltip";
+                    thisAgendaTooltip.textContent = data.agenda[blck].items[ses]
+                      .tooltip
+                      ? data.agenda[blck].items[ses].tooltip
+                      : data.agenda[blck].items[ses].title;
+                    thisAgendaTooltipTrans.textContent = data.agenda[blck]
+                      .items[ses].tooltip
+                      ? ""
+                      : data.agenda[blck].items[ses].translation;
+                    thisAgendaTooltipTrans.style.fontStyle = "italic";
+                    thisAgendaTooltip.appendChild(thisAgendaTooltipTrans);
+                    thisAgenda.className =
+                      "agenda track-" + blck + "-agenda-" + ses;
+                    thisAgendaImages.classList.add("images");
+                    thisAgenda.appendChild(thisAgendaTooltip);
+                    thisAgenda.appendChild(thisAgendaImages);
+                    thisAgendaTitle.appendChild(thisAgendaTitleTrans);
+                    thisAgenda.appendChild(thisAgendaTitle);
+                    thisAgenda.style.width = thisAgendaWidth + "px";
+                    thisAgenda.style.backgroundColor =
+                      data.agenda[blck].items[ses].bgColor;
+                    thisAgenda.style.left = left1Pos + "px";
+                    thisAgenda.href = data.agenda[blck].items[ses].url;
+                    calendarBlocks.append(thisAgenda);
+                  }
+                  agendaCalendar.appendChild(calendarBlocks);
                 }
-                thisAgendaTitle.textContent = data.agenda.items[ses].title;
-                thisAgendaTitle.style.color = data.agenda.items[ses].textColor;
-                thisAgendaTitleTrans.style.fontStyle = "italic";
-                thisAgendaTitleTrans.textContent =
-                  data.agenda.items[ses].translation;
-                thisAgendaTitleTrans.style.color =
-                  data.agenda.items[ses].textColor;
-                thisAgendaTooltip.className = "tooltip";
-                thisAgendaTooltip.textContent = data.agenda.items[ses].tooltip
-                  ? data.agenda.items[ses].tooltip
-                  : data.agenda.items[ses].title;
-                thisAgendaTooltipTrans.textContent = data.agenda.items[ses]
-                  .tooltip
-                  ? ""
-                  : data.agenda.items[ses].translation;
-                thisAgendaTooltipTrans.style.fontStyle = "italic";
-                thisAgendaTooltip.appendChild(thisAgendaTooltipTrans);
-                thisAgenda.classList.add("agenda");
-                thisAgenda.classList.add("agenda-" + ses);
-                thisAgendaImages.classList.add("images");
-                thisAgenda.appendChild(thisAgendaTooltip);
-                thisAgenda.appendChild(thisAgendaImages);
-                thisAgendaTitle.appendChild(thisAgendaTitleTrans);
-                thisAgenda.appendChild(thisAgendaTitle);
-                thisAgenda.style.width = thisAgendaWidth + "px";
-                thisAgenda.style.backgroundColor =
-                  data.agenda.items[ses].bgColor;
-                thisAgenda.style.left = left1Pos + "px";
-                thisAgenda.href = data.agenda.items[ses].url;
-                calendarBlocks.append(thisAgenda);
               }
             };
             var fillBreakOutBlocks = function fillBreakOutBlocks(data) {
@@ -736,25 +758,29 @@
               }
             };
             var fillLabels = function fillLabels(data) {
-              var agendaLabel = document.querySelector(
-                ".agenda-calendar-label"
-              );
-              var breakoutLabel = document.querySelector(
-                ".agenda-breakout-label"
-              );
-              var agendaDesc = document.createElement("p");
+              var rightCol = document.querySelector("#right-col");
+              var breakoutLabel = document.createElement("div");
               var breakoutDesc = document.createElement("p");
-              agendaLabel.innerHTML = "";
-              breakoutLabel.innerHTML = "";
-              agendaDesc.textContent = "No agenda";
-              breakoutDesc.textContent = "No breakout";
-              if (data.agenda) {
-                agendaLabel.textContent = data.agenda.name;
-                agendaDesc.textContent = data.agenda.description;
-                agendaDesc.classList.add("desc");
-                agendaDesc.style.fontStyle = "italic";
-                agendaLabel.style.height = "60px";
-                agendaLabel.style.backgroundColor = data.agenda.backgroundColor;
+              breakoutLabel.style.height = "60px";
+
+              if (data.agenda.length) {
+                for (var tracks = 0; tracks < data.agenda.length; tracks++) {
+                  var agendaLabel = document.createElement("div");
+                  var agendaDesc = document.createElement("p");
+
+                  agendaLabel.className = "agenda-calendar-label";
+                  agendaDesc.textContent = "No agenda";
+
+                  agendaLabel.textContent = data.agenda[tracks].name;
+                  agendaDesc.textContent = data.agenda[tracks].description;
+                  agendaDesc.className = "desc";
+                  agendaDesc.style.fontStyle = "italic";
+                  agendaLabel.style.height = "60px";
+                  agendaLabel.style.backgroundColor =
+                    data.agenda[tracks].backgroundColor;
+                  agendaLabel.appendChild(agendaDesc);
+                  rightCol.appendChild(agendaLabel);
+                }
               }
               if (data.breakouts) {
                 breakoutLabel.textContent = data.breakouts.name;
@@ -765,9 +791,9 @@
                   data.breakouts.items.length * 60 + "px";
                 breakoutLabel.style.backgroundColor =
                   data.breakouts.backgroundColor;
+                breakoutLabel.appendChild(breakoutDesc);
               }
-              agendaLabel.appendChild(agendaDesc);
-              breakoutLabel.appendChild(breakoutDesc);
+              rightCol.appendChild(breakoutLabel);
             };
             var switchTab = function switchTab() {
               var tabs = document.querySelectorAll(".tab");
@@ -781,41 +807,49 @@
               checkTabActive();
             };
             var activeSessions = function activeSessions(data) {
-              var convertedt = calculateBetweenLocalAndDefaultTz(
-                data.defaultCity,
-                data.defaultTimezoneOffset
-              );
-              for (
-                var actSes = 0;
-                actSes < data.agenda.items.length;
-                actSes++
-              ) {
-                var startTime = data.agenda.items[actSes].from;
-                var endTime = data.agenda.items[actSes].to;
-                var currentSess = document.querySelector(".agenda-" + actSes);
-                currentSess.style.backgroundColor =
-                  data.agenda.items[actSes].bgColor;
-                var s = startTime.split(":");
-                var dt1 = new Date(
-                  convertedt.getFullYear(),
-                  convertedt.getMonth(),
-                  convertedt.getDate(),
-                  parseInt(s[0]),
-                  parseInt(s[1]),
-                  parseInt(s[2])
-                );
-                var e = endTime.split(":");
-                var dt2 = new Date(
-                  convertedt.getFullYear(),
-                  convertedt.getMonth(),
-                  convertedt.getDate(),
-                  parseInt(e[0]),
-                  parseInt(e[1]),
-                  parseInt(e[2])
-                );
-                if (convertedt >= dt1 && convertedt <= dt2) {
-                  currentSess.style.backgroundColor =
-                    data.agenda.items[actSes].highlightBg;
+              if (data.agenda.length) {
+                for (var agnd = 0; agnd < data.agenda.length; agnd++) {
+                  console.log("agnd", agnd);
+                  var convertedt = calculateBetweenLocalAndDefaultTz(
+                    data.defaultCity,
+                    data.defaultTimezoneOffset
+                  );
+
+                  for (
+                    var actSes = 0;
+                    actSes < data.agenda[agnd].items.length;
+                    actSes++
+                  ) {
+                    var startTime = data.agenda[agnd].items[actSes].from;
+                    var endTime = data.agenda[agnd].items[actSes].to;
+                    var currentSess = document.querySelector(
+                      ".track-" + agnd + "-agenda-" + actSes
+                    );
+                    currentSess.style.backgroundColor =
+                      data.agenda[agnd].items[actSes].bgColor;
+                    var s = startTime.split(":");
+                    var dt1 = new Date(
+                      convertedt.getFullYear(),
+                      convertedt.getMonth(),
+                      convertedt.getDate(),
+                      parseInt(s[0]),
+                      parseInt(s[1]),
+                      parseInt(s[2])
+                    );
+                    var e = endTime.split(":");
+                    var dt2 = new Date(
+                      convertedt.getFullYear(),
+                      convertedt.getMonth(),
+                      convertedt.getDate(),
+                      parseInt(e[0]),
+                      parseInt(e[1]),
+                      parseInt(e[2])
+                    );
+                    if (convertedt >= dt1 && convertedt <= dt2) {
+                      currentSess.style.backgroundColor =
+                        data.agenda[agnd].items[actSes].highlightBg;
+                    }
+                  }
                 }
               }
 
@@ -859,6 +893,7 @@
               }
             };
             var startCheckingTime = function startCheckingTime(data) {
+              console.log("startCheckingTime", data);
               var from = new Date(data.date + " " + data.from);
               var to = new Date(data.date + " " + data.to);
               var secondsDiff = checkSecondsDiff(from, to);
@@ -996,189 +1031,376 @@
                 to: "13:00:00", // end time (may expand as a scope)
                 defaultCity: "New York", // Default timezone
                 defaultTimezoneOffset: "-4", // in GMT
-                agenda: {
-                  name: "Main Track",
-                  description: "Some description here...",
-                  backgroundColor: "#104836",
-                  items: [
-                    {
-                      from: "10:00:00", // start time (exact)
-                      to: "10:10:00", // end time (exact)
-                      title: "Championing the female economy",
-                      translation: "Potenciando la economía femenina",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "2",
-                    },
-                    {
-                      from: "10:10:00", // start time (exact)
-                      to: "10:20:00", // end time (exact)
-                      title: "Keynote",
-                      translation: "Discurso de apertura",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Keynote",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "10:20:00", // start time (exact)
-                      to: "10:30:00", // end time (exact)
-                      title: "Data driving the female economy",
-                      translation: "Datos que impulsan la economía femenina",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Presentation",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "10:30:00", // start time (exact)
-                      to: "11:15:00", // end time (exact)
-                      title:
-                        "The opportunity of championing the female economy",
-                      translation:
-                        "La oportunidad de potenciar la economía femenina",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Panel Discussion",
-                      numOfSpeakers: "5",
-                    },
-                    {
-                      from: "11:15:00", // start time (exact)
-                      to: "11:25:00", // end time (exact)
-                      title: "Break",
-                      translation: "",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#2c2c2c", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#cacaca",
-                      sessionType: "",
-                      numOfSpeakers: "",
-                    },
-                    {
-                      from: "11:25:00", // start time (exact)
-                      to: "11:35:00", // end time (exact)
-                      title:
-                        "Accelerating women's economic power through non-financial services",
-                      translation:
-                        "Acelerando el poder económico de las mujeres a través de los servicios no financieros",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Fireside Chat",
-                      numOfSpeakers: "2",
-                    },
-                    {
-                      from: "12:05:00", // start time (exact)
-                      to: "12:15:00", // end time (exact)
-                      title: "Regroup and consolidation",
-                      translation: "Reagrupamiento y consolidación",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "12:15:00", // start time (exact)
-                      to: "12:35:00", // end time (exact)
-                      title: "Wealth tech: A new way to make money",
-                      translation:
-                        "Tecnología en la gestión de patrimonios: una nueva forma de ganar dinero",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "",
-                      numOfSpeakers: "",
-                    },
-                    {
-                      from: "12:35:00", // start time (exact)
-                      to: "12:55:00", // end time (exact)
-                      title: "Day 1 highlights and learnings",
-                      translation: "Puntos destacados y aprendizajes del día 1",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                  ],
-                },
+                agenda: [
+                  {
+                    name: "Main Track",
+                    description: "Some description here...",
+                    backgroundColor: "#104836",
+                    items: [
+                      {
+                        from: "10:00:00", // start time (exact)
+                        to: "10:10:00", // end time (exact)
+                        title: "Championing the female economy",
+                        translation: "Potenciando la economía femenina",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Remarks",
+                        numOfSpeakers: "2",
+                      },
+                      {
+                        from: "10:10:00", // start time (exact)
+                        to: "10:20:00", // end time (exact)
+                        title: "Keynote",
+                        translation: "Discurso de apertura",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Keynote",
+                        numOfSpeakers: "1",
+                      },
+                      {
+                        from: "10:20:00", // start time (exact)
+                        to: "10:30:00", // end time (exact)
+                        title: "Data driving the female economy",
+                        translation: "Datos que impulsan la economía femenina",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Presentation",
+                        numOfSpeakers: "1",
+                      },
+                      {
+                        from: "10:30:00", // start time (exact)
+                        to: "11:15:00", // end time (exact)
+                        title:
+                          "The opportunity of championing the female economy",
+                        translation:
+                          "La oportunidad de potenciar la economía femenina",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Panel Discussion",
+                        numOfSpeakers: "5",
+                      },
+                      {
+                        from: "11:15:00", // start time (exact)
+                        to: "11:25:00", // end time (exact)
+                        title: "Break",
+                        translation: "",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#2c2c2c", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#cacaca",
+                        sessionType: "",
+                        numOfSpeakers: "",
+                      },
+                      {
+                        from: "11:25:00", // start time (exact)
+                        to: "11:35:00", // end time (exact)
+                        title:
+                          "Accelerating women's economic power through non-financial services",
+                        translation:
+                          "Acelerando el poder económico de las mujeres a través de los servicios no financieros",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Fireside Chat",
+                        numOfSpeakers: "2",
+                      },
+                      {
+                        from: "12:05:00", // start time (exact)
+                        to: "12:15:00", // end time (exact)
+                        title: "Regroup and consolidation",
+                        translation: "Reagrupamiento y consolidación",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Remarks",
+                        numOfSpeakers: "1",
+                      },
+                      {
+                        from: "12:15:00", // start time (exact)
+                        to: "12:35:00", // end time (exact)
+                        title: "Wealth tech: A new way to make money",
+                        translation:
+                          "Tecnología en la gestión de patrimonios: una nueva forma de ganar dinero",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "",
+                        numOfSpeakers: "",
+                      },
+                      {
+                        from: "12:35:00", // start time (exact)
+                        to: "12:55:00", // end time (exact)
+                        title: "Day 1 highlights and learnings",
+                        translation:
+                          "Puntos destacados y aprendizajes del día 1",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Remarks",
+                        numOfSpeakers: "1",
+                      },
+                    ],
+                  },
+                  {
+                    name: "Main Track",
+                    description: "Some description here...",
+                    backgroundColor: "#104836",
+                    items: [
+                      {
+                        from: "10:00:00", // start time (exact)
+                        to: "10:10:00", // end time (exact)
+                        title: "Championing the female economy",
+                        translation: "Potenciando la economía femenina",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Remarks",
+                        numOfSpeakers: "2",
+                      },
+                      {
+                        from: "10:10:00", // start time (exact)
+                        to: "10:20:00", // end time (exact)
+                        title: "Keynote",
+                        translation: "Discurso de apertura",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Keynote",
+                        numOfSpeakers: "1",
+                      },
+                      {
+                        from: "10:20:00", // start time (exact)
+                        to: "10:30:00", // end time (exact)
+                        title: "Data driving the female economy",
+                        translation: "Datos que impulsan la economía femenina",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Presentation",
+                        numOfSpeakers: "1",
+                      },
+                      {
+                        from: "10:40:00", // start time (exact)
+                        to: "11:15:00", // end time (exact)
+                        title:
+                          "The opportunity of championing the female economy",
+                        translation:
+                          "La oportunidad de potenciar la economía femenina",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Panel Discussion",
+                        numOfSpeakers: "5",
+                      },
+                      {
+                        from: "11:15:00", // start time (exact)
+                        to: "11:25:00", // end time (exact)
+                        title: "Break",
+                        translation: "",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#2c2c2c", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#cacaca",
+                        sessionType: "",
+                        numOfSpeakers: "",
+                      },
+                      {
+                        from: "11:25:00", // start time (exact)
+                        to: "11:35:00", // end time (exact)
+                        title:
+                          "Accelerating women's economic power through non-financial services",
+                        translation:
+                          "Acelerando el poder económico de las mujeres a través de los servicios no financieros",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Fireside Chat",
+                        numOfSpeakers: "2",
+                      },
+                      {
+                        from: "12:05:00", // start time (exact)
+                        to: "12:15:00", // end time (exact)
+                        title: "Regroup and consolidation",
+                        translation: "Reagrupamiento y consolidación",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Remarks",
+                        numOfSpeakers: "1",
+                      },
+                      {
+                        from: "12:15:00", // start time (exact)
+                        to: "12:35:00", // end time (exact)
+                        title: "Wealth tech: A new way to make money",
+                        translation:
+                          "Tecnología en la gestión de patrimonios: una nueva forma de ganar dinero",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "",
+                        numOfSpeakers: "",
+                      },
+                      {
+                        from: "12:35:00", // start time (exact)
+                        to: "12:55:00", // end time (exact)
+                        title: "Day 1 highlights and learnings",
+                        translation:
+                          "Puntos destacados y aprendizajes del día 1",
+                        url: "#",
+                        people: [
+                          {
+                            name: "",
+                            image: "",
+                          },
+                        ],
+                        tooltip: "",
+                        bgColor: "#104836", // background color customizable
+                        textColor: "#fff", // text color customizable
+                        highlightBg: "#42d886",
+                        sessionType: "Remarks",
+                        numOfSpeakers: "1",
+                      },
+                    ],
+                  },
+                ],
                 breakouts: {
                   name: "Breakouts",
                   description: "",
@@ -1257,457 +1479,6 @@
                       ],
                       sessionType: "Breakout Session",
                       numOfSpeakers: "4",
-                    },
-                  ],
-                },
-              },
-              {
-                name: "Day 2",
-                date: "10/07/2020", // the date
-                from: "06:30:00", // start time (may expand as a scope)
-                to: "10:30:00", // end time (may expand as a scope)
-                defaultCity: "New York", // Default timezone
-                defaultTimezoneOffset: "-4", // in GMT
-                agenda: {
-                  name: "Main Track",
-                  description: "Some description here...",
-                  backgroundColor: "#104836",
-                  items: [
-                    {
-                      from: "07:00:00", // start time (exact)
-                      to: "07:05:00", // end time (exact)
-                      title:
-                        "The transformational opportunity of fintech on the female economy",
-                      translation:
-                        "La oportunidad de la transformación de las fintech en la economía femenina",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "07:05:00", // start time (exact)
-                      to: "07:25:00", // end time (exact)
-                      title:
-                        "Blue sky vision - the impact of fintech on women's markets",
-                      translation:
-                        "Visión General: el impacto de las fintech en el segmento mujer",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Fireside Chat",
-                      numOfSpeakers: "2",
-                    },
-                    {
-                      from: "07:25:00", // start time (exact)
-                      to: "07:45:00", // end time (exact)
-                      title: "Alliance fintech research",
-                      translation: "Investigación fintech de la Alianza",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Fireside Chat",
-                      numOfSpeakers: "2",
-                    },
-                    {
-                      from: "07:45:00", // start time (exact)
-                      to: "08:30:00", // end time (exact)
-                      title:
-                        "How fintechs are and can support the full financial inclusion of women",
-                      translation:
-                        "Cómo las fintech están y pueden apoyar a la plena inclusión financiera de las mujeres",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Panel Discussion",
-                      numOfSpeakers: "5",
-                    },
-                    {
-                      from: "08:30:00", // start time (exact)
-                      to: "08:35:00", // end time (exact)
-                      title: "Break",
-                      translation: "",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#2c2c2c", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#cacaca",
-                      sessionType: "",
-                      numOfSpeakers: "",
-                    },
-                    {
-                      from: "08:35:00", // start time (exact)
-                      to: "08:40:00", // end time (exact)
-                      title: "Reimagining fintech as gender intelligent",
-                      translation:
-                        "Reimaginando a las fintechs con inteligencia de género",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "09:15:00", // start time (exact)
-                      to: "09:25:00", // end time (exact)
-                      title: "Regroup and consolidation",
-                      translation: "Reagrupamiento y consolidación",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "09:25:00", // start time (exact)
-                      to: "09:55:00", // end time (exact)
-                      title: "e-Hackathon pitches & final vote",
-                      translation:
-                        "Presentaciones finales del e-Hackathon y votación fina",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Presentation",
-                      numOfSpeakers: "2",
-                    },
-                    {
-                      from: "09:55:00", // start time (exact)
-                      to: "10:05:00", // end time (exact)
-                      title: "Day 2 highlights and learnings",
-                      translation: "Puntos destacados y aprendizajes del día 2",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                  ],
-                },
-                breakouts: {
-                  name: "Breakouts",
-                  description: "Some description here...",
-                  backgroundColor: "#3cb4ff",
-                  items: [
-                    {
-                      title: "Breakout 1: Data bias & course corrections",
-                      translation:
-                        "Sesión de trabajo 1: sesgo de datos y cambios de procesos",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
-                      bgColor: "#3cb4ff",
-                      textColor: "#fff",
-                      highlightBg: "#6bd5ff",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          imageURL: "",
-                        },
-                      ],
-                      sessionType: "Breakout Session",
-                      numOfSpeakers: "3",
-                    },
-                    {
-                      title:
-                        "Breakout 2: Incentives & ecosystem support - defining stakeholder roles",
-                      translation:
-                        "Sesión de trabajo 2: Incentivos y apoyo al ecosistema: definiendo los roles de los grupos de interés",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
-                      bgColor: "#3cb4ff",
-                      textColor: "#fff",
-                      highlightBg: "#6bd5ff",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          imageURL: "",
-                        },
-                      ],
-                      sessionType: "Breakout Session",
-                      numOfSpeakers: "4",
-                    },
-                    {
-                      title:
-                        "Breakout 3: Business case For gender intelligent fintech (Spanish)",
-                      translation:
-                        "Sesión de trabajo 3: El caso de negocio para las fintech con inteligencia de género",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
-                      bgColor: "#3cb4ff",
-                      textColor: "#fff",
-                      highlightBg: "#6bd5ff",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          imageURL: "",
-                        },
-                      ],
-                      sessionType: "Breakout Session",
-                      numOfSpeakers: "4",
-                    },
-                    {
-                      title: "Breakout 4: Investing in women-focused fintechs",
-                      translation:
-                        "Sesión de trabajo 4: Invirtiendo en las fintechs centradas en las mujeres",
-                      from: "08:40:00", // start time (exact)
-                      to: "09:15:00", // end time (exact)
-                      bgColor: "#3cb4ff",
-                      textColor: "#fff",
-                      highlightBg: "#6bd5ff",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          imageURL: "",
-                        },
-                      ],
-                      sessionType: "Breakout Session",
-                      numOfSpeakers: "3",
-                    },
-                  ],
-                },
-              },
-              {
-                name: "Day 3",
-                date: "10/08/2020", // the date
-                from: "08:30:00", // start time (may expand as a scope)
-                to: "12:30:00", // end time (may expand as a scope)
-                defaultCity: "New York", // Default timezone
-                defaultTimezoneOffset: "-4", // in GMT
-                agenda: {
-                  name: "Main Track",
-                  description: "Some description here...",
-                  backgroundColor: "#104836",
-                  items: [
-                    {
-                      from: "09:00:00", // start time (exact)
-                      to: "09:05:00", // end time (exact)
-                      title: "The future of work",
-                      translation: "El futuro del trabajo",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "09:05:00", // start time (exact)
-                      to: "09:25:00", // end time (exact)
-                      title:
-                        "Building the workforce of tomorrow - diversity & inclusion post pandemic",
-                      translation:
-                        "Construyendo la fuerza laboral de mañana: diversidad e inclusión después de la pandemia",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Fireside Chat",
-                      numOfSpeakers: "2",
-                    },
-                    {
-                      from: "09:25:00", // start time (exact)
-                      to: "10:10:00", // end time (exact)
-                      title:
-                        "Building the workforce of tomorrow - diversity & inclusion post pandemic",
-                      translation: "",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Fireside Chat",
-                      numOfSpeakers: "2",
-                    },
-                    {
-                      from: "10:10:00", // start time (exact)
-                      to: "10:15:00", // end time (exact)
-                      title: "Break",
-                      translation: "",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#2c2c2c", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#cacaca",
-                      sessionType: "Panel Discussion",
-                      numOfSpeakers: "5",
-                    },
-                    {
-                      from: "10:15:00", // start time (exact)
-                      to: "10:50:00", // end time (exact)
-                      title: "Interactive session or gamification",
-                      translation: "Sesión interactiva o gamificación",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "",
-                      numOfSpeakers: "",
-                    },
-                    {
-                      from: "10:50:00", // start time (exact)
-                      to: "11:35:00", // end time (exact)
-                      title:
-                        "Doing Business 2020 & beyond: serving customers in the new normal",
-                      translation:
-                        "Haciendo negocios 2020 y más allá: sirviendo a los clientes en la nueva normalidad",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "11:35:00", // start time (exact)
-                      to: "11:55:00", // end time (exact)
-                      title: "Women SME platform",
-                      translation: "Plataforma PYMEs propiedad de mujeres",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Remarks",
-                      numOfSpeakers: "1",
-                    },
-                    {
-                      from: "11:55:00", // start time (exact)
-                      to: "12:05:00", // end time (exact)
-                      title: "Closing remarks",
-                      translation: "Palabras de clausura",
-                      url: "#",
-                      people: [
-                        {
-                          name: "",
-                          image: "",
-                        },
-                      ],
-                      tooltip: "",
-                      bgColor: "#104836", // background color customizable
-                      textColor: "#fff", // text color customizable
-                      highlightBg: "#42d886",
-                      sessionType: "Presentation",
-                      numOfSpeakers: "2",
                     },
                   ],
                 },

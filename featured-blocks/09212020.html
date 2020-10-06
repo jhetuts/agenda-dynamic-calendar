@@ -15,9 +15,11 @@
     }
     .stream-wrap h2 {
       text-align: center;
+      margin-bottom: 10px;
     }
     .stream-block {
       display: flex;
+      margin-bottom: 40px;
     }
     .stream-block h2 {
       text-align: center;
@@ -25,20 +27,40 @@
     .stream-block a {
       display: flex;
       justify-content: flex-start;
-      padding: 10px;
+      margin: 10px;
       flex-wrap: wrap;
-      align-content: space-between;
+      align-content: flex-start;
+      width: calc(25% - 20px);
+      color: #2c2c2c;
+      text-decoration: none;
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: rgba(0, 0, 0, 0.2) 0px 15px 35px 0px;
+      overflow: hidden;
+    }
+    .stream-block a h3 {
+      margin-bottom: 10px;
+      font-size: 1em;
+    }
+    .stream-block a p {
+      font-size: 0.8em;
     }
     .stream-block a img {
       display: block;
       width: 100%;
       box-sizing: border-box;
     }
-    .stream-block a div {
-      width: 100%;
-      height: 200px;
-      background-size: contain;
-      background-repeat: no-repeat;
+    .stream-block a .block-desc-wrap {
+      padding: 10px;
+    }
+    @media screen and (max-width: 768px) {
+      .stream-block {
+        flex-wrap: wrap;
+      }
+      .stream-block a {
+        margin: 5px;
+        width: calc(50% - 10px);
+      }
     }
   </style>
   <body>
@@ -61,17 +83,17 @@
                   {
                     title: "TAPPING INTO SME ECOSYSTEM",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/7fe2dc3ed6d049c0a24133cbaa2da3d8.jpg",
-                    descriptions:
-                      "Description of the breakout session goes here.",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/0134467a8e3e4241bf44be322c6fb032.png",
+                    blockTitle: "6th October - BREAKOUT 1",
+                    descriptions: "TAPPING INTO SME ECOSYSTEM",
                     url: "https://www.gevme.com/live/zoom-breakout-test",
                   },
                   {
                     title: "UPSKILLING THROUGH ECOMMERCE PLATFORMS",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/2fea7b1a85994765b74def3d9276aa78.jpg",
-                    descriptions:
-                      "Description of the breakout session goes here.",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/864979b337664b9cbc5a41b13c5e92fa.png",
+                    blockTitle: "6th October - BREAKOUT 2",
+                    descriptions: "UPSKILLING THROUGH ECOMMERCE PLATFORMS",
                     url:
                       "https://www.gevme.com/live/breakout-1-data-bias-and-course-corrections",
                   },
@@ -79,18 +101,19 @@
                     title:
                       "EL CASO DE NEGOCIOS Y LA IMPORTANCIA DE MEDIR LOS SERVICIOS NO FINANCIEROS (EÑ ESPAÑOL)",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/52f57264dad34ff6bdfb0992b0427830.jpg",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/9b5eee0eaacb4c9fbd6defea6422247b.png",
+                    blockTitle: "6th October - BREAKOUT 3",
                     descriptions:
-                      "Description of the breakout session goes here.",
+                      "EL CASO DE NEGOCIOS Y LA IMPORTANCIA DE MEDIR LOS SERVICIOS NO FINANCIEROS (EÑ ESPAÑOL)",
                     url:
                       "https://www.gevme.com/live/breakout-3-el-caso-de-negocios-y-la-importancia-de-medir-los-servicios-no-financieros-(en-espanol)",
                   },
                   {
                     title: "NFS BUSINESS CASE & HOW TO MEASURE IT",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/73afaf78a1044c8592b4685827172c7e.jpg",
-                    descriptions:
-                      "Description of the breakout session goes here.",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8fa935f8cafc4d44936a59d3e50a540f.png",
+                    blockTitle: "6th October - BREAKOUT 4",
+                    descriptions: "NFS BUSINESS CASE & HOW TO MEASURE IT",
                     url:
                       "https://www.gevme.com/live/breakout-4-nfs-business-case-and-how-to-measure-it",
                   },
@@ -102,9 +125,9 @@
                   {
                     title: "DATA BIAS & COURSE CORRECTIONS",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/ffda0df315a04a0499258c3eb2aca795.jpg",
-                    descriptions:
-                      "Description of the breakout session goes here.",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/efca026e718d4f7db2aa89d74eb3b3ad.png",
+                    blockTitle: "7th October - BREAKOUT 1",
+                    descriptions: "DATA BIAS & COURSE CORRECTIONS",
                     url:
                       "https://www.gevme.com/live/breakout-1-data-bias-and-course-corrections",
                   },
@@ -112,27 +135,28 @@
                     title:
                       "INCENTIVES & ECOSYSTEM SUPPORT - DEFINING STAKEHOLDER ROLES",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/087076a736ff4174b8fec927635ed884.jpg",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/a1bbedfc066d42faba18d3541c117fdd.png",
+                    blockTitle: "7th October - BREAKOUT 2",
                     descriptions:
-                      "Description of the breakout session goes here.",
+                      "INCENTIVES & ECOSYSTEM SUPPORT - DEFINING STAKEHOLDER ROLES",
                     url:
                       "https://www.gevme.com/live/breakout-2-incentives-and-ecosystem-support-defining-stakeholder-roles",
                   },
                   {
                     title: "BUSINESS CASE FOR GENDER INTELLIGENT FINTEC",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/dabd19f865084f089bdff4bc1d9db753.jpg",
-                    descriptions:
-                      "Description of the breakout session goes here.",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/ed9648c3c0b7492d967a8dd1d13972c3.png",
+                    blockTitle: "7th October - BREAKOUT 3",
+                    descriptions: "BUSINESS CASE FOR GENDER INTELLIGENT FINTEC",
                     url:
                       "https://www.gevme.com/live/breakout-3-business-case-for-gender-intelligent-fintech-(with-spanish-translation)",
                   },
                   {
                     title: "INVESTING IN WOMEN-FOCUSED FINTECHS",
                     image:
-                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/8IstfJpSiDwAWmoA0vlOfsTHD/5f213f9fd9de7f004085fdc5/401a6e9940734febb482eb3978f03477.jpg",
-                    descriptions:
-                      "Description of the breakout session goes here.",
+                      "https://s3.ap-southeast-1.amazonaws.com/content.gevme.com/9447d6903a5f456695f09256a5d2d710.png",
+                    blockTitle: "7th October - BREAKOUT 4",
+                    descriptions: "INVESTING IN WOMEN-FOCUSED FINTECHS",
                     url:
                       "https://www.gevme.com/live/breakout-4-investing-in-women-focused-fintechs",
                   },
@@ -148,16 +172,20 @@
               for (var b = 0; b < blocksData[i].breakouts.length; b++) {
                 var blocks = document.createElement("a");
                 var blockImg = document.createElement("img");
+                var blockDescWrap = document.createElement("div");
+                var blockTitle = document.createElement("h3");
                 var blockDesc = document.createElement("p");
 
                 blocks.href = blocksData[i].breakouts[b].url;
-                // blockImg.style.backgroundImage =
-                //   "url(" + blocksData[i].breakouts[b].image + ")";
                 blockImg.src = blocksData[i].breakouts[b].image;
+                blockImg.alt = blocksData[i].breakouts[b].title;
+                blockDescWrap.className = "block-desc-wrap";
+                blockTitle.textContent = blocksData[i].breakouts[b].blockTitle;
                 blockDesc.textContent = blocksData[i].breakouts[b].descriptions;
-
+                blockDescWrap.appendChild(blockTitle);
+                blockDescWrap.appendChild(blockDesc);
                 blocks.appendChild(blockImg);
-                blocks.appendChild(blockDesc);
+                blocks.appendChild(blockDescWrap);
 
                 parentBlock.appendChild(blocks);
               }
