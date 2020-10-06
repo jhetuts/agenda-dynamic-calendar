@@ -85,7 +85,7 @@
         cursor: pointer;
       }
       .agenda-timezone .changeTz {
-        display: inline;
+        display: none;
         margin: 0 5px;
         color: #3c90fa;
         font-size: 12px;
@@ -384,7 +384,6 @@
         var checkingTime = [];
         var checkAgendaTarget = setInterval(function () {
           var agendaTarget = document.querySelector(".agenda-ui");
-          console.log("running checAgendaTarget");
           if (agendaTarget) {
             var dragScroll = function dragScroll(initial) {
               var container = document.querySelector(".col-2");
@@ -419,7 +418,6 @@
                 data.defaultTimezoneOffset
               );
 
-              console.log(y);
               var today = new Date(y);
               var dd = String(today.getDate()).padStart(2, "0");
               var mm = String(today.getMonth() + 1).padStart(2, "0");
@@ -530,7 +528,6 @@
               var minuteBase = data.from.split(":");
               var counter = parseInt(minuteBase[1]);
               var base = parseFloat(convertedFrom ? convertedFrom : data.from);
-              console.log("base", base);
 
               for (var t = 0; t <= secondsDiff / 60 / 5; t++) {
                 var timeMarks = document.createElement("div");
@@ -809,7 +806,6 @@
             var activeSessions = function activeSessions(data) {
               if (data.agenda.length) {
                 for (var agnd = 0; agnd < data.agenda.length; agnd++) {
-                  console.log("agnd", agnd);
                   var convertedt = calculateBetweenLocalAndDefaultTz(
                     data.defaultCity,
                     data.defaultTimezoneOffset
@@ -893,7 +889,6 @@
               }
             };
             var startCheckingTime = function startCheckingTime(data) {
-              console.log("startCheckingTime", data);
               var from = new Date(data.date + " " + data.from);
               var to = new Date(data.date + " " + data.to);
               var secondsDiff = checkSecondsDiff(from, to);
@@ -917,7 +912,6 @@
               checkingTime.push(runMarkerRun);
             };
             var addDayTab = function addDayTab() {
-              console.log(eventData);
               var agendaDays = document.querySelector(".agenda-days");
               eventData.map(function (day, index) {
                 var tab = document.createElement("li");
@@ -1499,7 +1493,6 @@
             agendaTarget.appendChild(theAgendaUI);
             addDayTab();
             clearInterval(checkAgendaTarget);
-            console.log("stopping checAgendaTarget");
 
             changeTimeZoneBtn.addEventListener("click", changeTimeZone);
           }
